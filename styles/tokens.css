@@ -1,0 +1,53 @@
+/* ============================================================
+   Goventis Design Tokens
+   Light, modern-minimal. Single accent (indigo).
+   Tüm renk/typography/radius/shadow tek noktadan.
+   ============================================================ */
+
+:root {
+  /* Surfaces */
+  --bg:        #f6f7f9;
+  --surface:   #ffffff;
+  --surface-2: #fbfbfc;
+
+  /* Text */
+  --fg:        #0d1117;
+  --fg-2:      #21252b;
+  --muted:     #6a7280;
+  --muted-2:   #9aa0aa;
+
+  /* Borders */
+  --border:    #e7e9ee;
+  --border-2:  #eef0f4;
+  --hover:     #f3f4f7;
+
+  /* Accent */
+  --accent:    #5b5ff0;
+  --accent-2:  #eef0ff;
+  --accent-3:  #d9dcff;
+
+  /* Status (workflow) */
+  --status-todo:    #9aa0aa;
+  --status-prog:    #f4a738;
+  --status-review:  #6f7be5;
+  --status-done:    #2ea66a;
+  --status-blocked: #d2473d;
+
+  /* Priority */
+  --prio-urgent:   #d2473d;
+  --prio-high:     #ea8245;
+  --prio-medium:   #6a7280;
+  --prio-low:      #9aa0aa;
+
+  /* Type */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius:    8px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-modal: 0 1px 2px rgba(13,17,23,.04), 0 12px 32px rgba(13,17,23,.12), 0 32px 80px rgba(13,17,23,.10);
+}

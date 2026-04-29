@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "Goventis — Workspace (shell)",
+  "entry": "goventis-shell.html",
+  "renderer": "html",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-04-29T14:29:37.332Z",
+  "updatedAt": "2026-04-29T14:29:37.338Z",
+  "sourceSkillId": "blog-post",
+  "designSystemId": "linear-app",
+  "metadata": {
+    "identifier": "goventis-shell",
+    "inferred": false
+  }
+}

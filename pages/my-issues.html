@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Goventis — My Issues</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/layout.css" />
+  <link rel="stylesheet" href="../styles/components.css" />
+
+  <style>
+    /* Standalone (iframe değilken) düzgün dursun */
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--surface); }
+    .main { height: 100%; }
+  </style>
+</head>
+<body>
+
+<main class="main">
+
+  <!-- ───────── Page header ───────── -->
+  <div class="page-head">
+    <div>
+      <div class="page-title-row">
+        <h1 class="page-title">My Issues</h1>
+        <span class="page-count" id="totalCount">14 issues</span>
+      </div>
+      <div class="page-sub">Üzerinde çalıştığın işler — analizden QA'e, AI destekli workflow akışı.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn" type="button">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg></span>
+        Filter
+      </button>
+      <button class="btn" type="button">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span>
+        Group: Status
+      </button>
+      <button class="btn btn-primary" type="button">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        New issue
+      </button>
+    </div>
+  </div>
+
+  <!-- ───────── Filters ───────── -->
+  <div class="filter-row">
+    <button class="chip chip-applied" type="button">Assignee: Hasan A. <span class="x">×</span></button>
+    <button class="chip chip-applied" type="button">Sprint: 24 <span class="x">×</span></button>
+    <button class="chip" type="button">+ Priority</button>
+    <button class="chip" type="button">+ Label</button>
+    <button class="chip" type="button">+ Project</button>
+    <span class="spacer"></span>
+    <input class="search" placeholder="Search issues…" />
+  </div>
+
+  <!-- ───────── List ───────── -->
+  <div class="list-wrap" id="listWrap"><!-- populated by JS --></div>
+
+</main>
+
+<script>
+  /* ============================================================
+     Demo data — Goventis için gerçekçi içerik.
+     ============================================================ */
+  const PEOPLE = {
+    HA: { name: 'Hasan A.', color: '#c8b6e4', text: '#2d1a55' },
+    EK: { name: 'Ezgi K.',  color: '#fbcfa3', text: '#5a2f10' },
+    MK: { name: 'Mert K.',  color: '#a7d8c2', text: '#0e3d2a' },
+    SY: { name: 'Selin Y.', color: '#f4b4c0', text: '#5a1024' },
+    BD: { name: 'Burak D.', color: '#9bc7f0', text: '#0a2e5c' },
+    AC: { name: 'Aylin C.', color: '#e6d28a', text: '#4d3500' },
+    OG: { name: 'Onur G.',  color: '#cfc1f5', text: '#2a1855' },
+  };
+
+  const ISSUES = [
+    { id:'GOV-142', title:'Implement OAuth2 SSO flow for enterprise tenants',
+      labels:[{k:'auth',c:'#5b5ff0'},{k:'enterprise',c:'#f4a738'}],
+      status:'prog', statusName:'In Progress', priority:'high',
+      assignee:'HA', reporter:'EK', sprint:'24', points:8, ai:87 },
+
+    { id:'GOV-138', title:'Refactor task assignment service for AI confidence scoring',
+      labels:[{k:'ai-core',c:'#5b5ff0'}],
+      status:'prog', statusName:'In Progress', priority:'high',
+      assignee:'HA', reporter:'MK', sprint:'24', points:5, ai:74 },
+
+    { id:'GOV-131', title:'Workflow editor: drag-to-connect arrows feel laggy on Firefox',
+      labels:[{k:'bug',c:'#d2473d'},{k:'editor',c:'#6a7280'}],
+      status:'prog', statusName:'In Progress', priority:'medium',
+      assignee:'HA', reporter:'SY', sprint:'24', points:3, ai:62 },
+
+    { id:'GOV-127', title:'Persist audit logs to Postgres + ClickHouse fan-out',
+      labels:[{k:'infra',c:'#9bc7f0'}],
+      status:'review', statusName:'In Review', priority:'high',
+      assignee:'HA', reporter:'BD', sprint:'24', points:5, ai:91 },
+
+    { id:'GOV-119', title:'Design system token migration to OKLCH',
+      labels:[{k:'design-system',c:'#cfc1f5'}],
+      status:'review', statusName:'In Review', priority:'medium',
+      assignee:'HA', reporter:'AC', sprint:'24', points:3, ai:88 },
+
+    { id:'GOV-152', title:'AI agent: write Jira comment when task moves to QA',
+      labels:[{k:'ai-core',c:'#5b5ff0'},{k:'jira',c:'#9bc7f0'}],
+      status:'todo', statusName:'Todo', priority:'high',
+      assignee:'HA', reporter:'EK', sprint:'24', points:5, ai:81 },
+
+    { id:'GOV-148', title:'Add bulk select + bulk actions to My Issues table',
+      labels:[{k:'frontend',c:'#a7d8c2'}],
+      status:'todo', statusName:'Todo', priority:'medium',
+      assignee:'HA', reporter:'OG', sprint:'24', points:3, ai:70 },
+
+    { id:'GOV-145', title:'Skill graph: weekly recompute job times out on >50k events',
+      labels:[{k:'ai-core',c:'#5b5ff0'},{k:'perf',c:'#f4a738'}],
+      status:'todo', statusName:'Todo', priority:'urgent',
+      assignee:'HA', reporter:'MK', sprint:'24', points:8, ai:58 },
+
+    { id:'GOV-141', title:'Empty state for Projects when org is brand-new',
+      labels:[{k:'design',c:'#cfc1f5'}],
+      status:'todo', statusName:'Todo', priority:'low',
+      assignee:'HA', reporter:'SY', sprint:'24', points:2, ai:93 },
+
+    { id:'GOV-137', title:'Sprint burn-down chart: misses scope changes mid-sprint',
+      labels:[{k:'analytics',c:'#e6d28a'},{k:'bug',c:'#d2473d'}],
+      status:'todo', statusName:'Todo', priority:'medium',
+      assignee:'HA', reporter:'BD', sprint:'24', points:3, ai:66 },
+
+    { id:'GOV-159', title:'Inbox: snooze + remind tomorrow',
+      labels:[{k:'frontend',c:'#a7d8c2'}],
+      status:'todo', statusName:'Todo', priority:'low',
+      assignee:'HA', reporter:'AC', sprint:'25', points:2, ai:79 },
+
+    { id:'GOV-114', title:'Fix race condition in workflow state machine',
+      labels:[{k:'bug',c:'#d2473d'},{k:'workflow',c:'#5b5ff0'}],
+      status:'done', statusName:'Done', priority:'urgent',
+      assignee:'HA', reporter:'MK', sprint:'23', points:5, ai:95 },
+
+    { id:'GOV-108', title:'Jira webhook listener for status sync',
+      labels:[{k:'jira',c:'#9bc7f0'}],
+      status:'done', statusName:'Done', priority:'high',
+      assignee:'HA', reporter:'EK', sprint:'23', points:5, ai:94 },
+
+    { id:'GOV-101', title:'Replace tooltip lib with native popover',
+      labels:[{k:'frontend',c:'#a7d8c2'}],
+      status:'done', statusName:'Done', priority:'low',
+      assignee:'HA', reporter:'OG', sprint:'23', points:1, ai:97 },
+  ];
+
+  /* ============================================================
+     Render — Issue list + groups
+     ============================================================ */
+  const PRIO_ICONS = {
+    urgent: `<svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" fill="#d2473d"/><path d="M8 4v4.5M8 11v.5" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    high:   `<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="9" width="2.5" height="5" rx=".5" fill="#ea8245"/><rect x="6.5" y="6" width="2.5" height="8" rx=".5" fill="#ea8245"/><rect x="11" y="3" width="2.5" height="11" rx=".5" fill="#ea8245"/></svg>`,
+    medium: `<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="9" width="2.5" height="5" rx=".5" fill="#6a7280"/><rect x="6.5" y="6" width="2.5" height="8" rx=".5" fill="#6a7280"/><rect x="11" y="3" width="2.5" height="11" rx=".5" fill="#cdd1d8"/></svg>`,
+    low:    `<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="9" width="2.5" height="5" rx=".5" fill="#9aa0aa"/><rect x="6.5" y="6" width="2.5" height="8" rx=".5" fill="#cdd1d8"/><rect x="11" y="3" width="2.5" height="11" rx=".5" fill="#cdd1d8"/></svg>`,
+  };
+  const STATUS_DOT = {
+    todo:   `<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#9aa0aa" stroke-width="1.4"/></svg>`,
+    prog:   `<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#f4a738" stroke-width="1.4"/><path d="M7 7 L7 1.5 A 5.5 5.5 0 0 1 12.2 9.5 Z" fill="#f4a738"/></svg>`,
+    review: `<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#6f7be5" stroke-width="1.4"/><circle cx="7" cy="7" r="2.5" fill="#6f7be5"/></svg>`,
+    done:   `<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="#2ea66a"/><path d="M4 7.2 6 9.2 10 5.2" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+  };
+
+  function personChip(code, role) {
+    const p = PEOPLE[code];
+    if (!p) return '';
+    const init = p.name.split(' ').map(w => w[0]).join('').slice(0, 2);
+    return `<span class="person ${role || ''}" style="background:${p.color};color:${p.text}">${init}</span>`;
+  }
+
+  function aiBarClass(n) {
+    if (n >= 80) return '';
+    if (n >= 60) return 'warn';
+    return 'low';
+  }
+
+  function rowHtml(it) {
+    const labelsHtml = (it.labels || []).map(l =>
+      `<span class="label-pill"><span class="swatch" style="background:${l.c}"></span>${l.k}</span>`
+    ).join('');
+    return `<div class="issue-row" data-id="${it.id}">
+      <div class="issue-row__id">${it.id}</div>
+      <div class="issue-row__prio">
+        <div class="prio-icon" title="${it.priority}">${PRIO_ICONS[it.priority] || PRIO_ICONS.medium}</div>
+      </div>
+      <div class="issue-row__title">${it.title}<span class="labels">${labelsHtml}</span></div>
+      <div class="issue-row__status">${STATUS_DOT[it.status]} ${it.statusName}</div>
+      <div class="issue-row__sprint">Sprint ${it.sprint}</div>
+      <div class="issue-row__ai">
+        <div class="ai-bar ${aiBarClass(it.ai)}"><span style="width:${it.ai}%"></span></div>
+        <div class="ai-num">${it.ai}%</div>
+      </div>
+      <div class="issue-row__points">${it.points} pt</div>
+      <div class="issue-row__people">${personChip(it.assignee)}${personChip(it.reporter, 'reporter')}</div>
+      <div class="issue-row__jira" title="Open in Jira">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+    </div>`;
+  }
+
+  function groupBlock(label, status, items) {
+    if (items.length === 0) return '';
+    return `<section class="group">
+      <header class="group-head">
+        <span class="group-dot ${status}"></span>
+        <span class="group-name">${label}</span>
+        <span class="group-count">${items.length}</span>
+        <div class="group-actions">
+          <button class="icon-btn" title="Add" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+      </header>
+      ${items.map(rowHtml).join('')}
+    </section>`;
+  }
+
+  function renderList() {
+    const grouped = {
+      prog:   ISSUES.filter(i => i.status === 'prog'),
+      review: ISSUES.filter(i => i.status === 'review'),
+      todo:   ISSUES.filter(i => i.status === 'todo'),
+      done:   ISSUES.filter(i => i.status === 'done'),
+    };
+    document.getElementById('listWrap').innerHTML =
+      groupBlock('In Progress', 'prog',   grouped.prog) +
+      groupBlock('In Review',   'review', grouped.review) +
+      groupBlock('Todo',        'todo',   grouped.todo) +
+      groupBlock('Done',        'done',   grouped.done);
+    document.getElementById('totalCount').textContent = `${ISSUES.length} issues`;
+
+    document.querySelectorAll('.issue-row').forEach(r => {
+      r.addEventListener('click', () => openIssue(r.dataset.id));
+    });
+  }
+
+  /* ============================================================
+     Tell the shell to open the issue modal.
+     The shell renders the modal at viewport scale so it covers
+     sidebar + topbar — which the iframe by itself cannot do.
+     If running standalone (no parent), fall back to no-op.
+     ============================================================ */
+  function openIssue(id) {
+    const it = ISSUES.find(i => i.id === id);
+    if (!it) return;
+
+    const payload = {
+      type: 'openIssue',
+      issue: {
+        id:         it.id,
+        title:      it.title,
+        statusName: it.statusName,
+        priority:   it.priority.charAt(0).toUpperCase() + it.priority.slice(1),
+        assignee:   PEOPLE[it.assignee].name,
+        reporter:   PEOPLE[it.reporter].name,
+        sprint:     it.sprint,
+        points:     it.points,
+        ai:         it.ai,
+        labelTop:   it.labels[0]?.k || 'task',
+      }
+    };
+
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(payload, '*');
+    }
+  }
+
+  // Iframe focus may swallow keys; relay Esc up so shell can close the modal.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'closeIssue' }, '*');
+    }
+  });
+
+  renderList();
+</script>
+
+</body>
+</html>

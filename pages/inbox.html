@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Goventis — Inbox</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/layout.css" />
+  <link rel="stylesheet" href="../styles/components.css" />
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--surface); }
+    .main { height: 100%; }
+  </style>
+</head>
+<body>
+
+<main class="main">
+  <div class="page-head">
+    <div>
+      <div class="page-title-row">
+        <h1 class="page-title">Inbox</h1>
+        <span class="page-count">0 yeni</span>
+      </div>
+      <div class="page-sub">AI'nın bir kararına onay bekleyen ve sana mention atılan tüm bildirimler.</div>
+    </div>
+  </div>
+
+  <div class="empty-state">
+    <div class="empty-card">
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-6l-2 3h-4l-2-3H2"/>
+          <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/>
+        </svg>
+      </div>
+      <h2>Inbox boş</h2>
+      <p>AI'nın senden onay beklediği aksiyonlar, takım mention'ları ve Jira sync uyarıları burada görünecek. Şu an her şey yolunda.</p>
+      <button class="btn" type="button">Bildirim ayarları</button>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

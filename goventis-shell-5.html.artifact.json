@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "Goventis — Workspace (bigger tabs + rich timer & calendar)",
+  "entry": "goventis-shell-5.html",
+  "renderer": "html",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-04-29T14:53:59.381Z",
+  "updatedAt": "2026-04-29T14:53:59.387Z",
+  "sourceSkillId": "blog-post",
+  "designSystemId": "linear-app",
+  "metadata": {
+    "identifier": "goventis-shell",
+    "inferred": false
+  }
+}

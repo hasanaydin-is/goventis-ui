@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Goventis — Skills</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/layout.css" />
+  <link rel="stylesheet" href="../styles/components.css" />
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--surface); }
+    .main { height: 100%; }
+  </style>
+</head>
+<body>
+
+<main class="main">
+  <div class="page-head">
+    <div>
+      <div class="page-title-row">
+        <h1 class="page-title">Skills</h1>
+        <span class="page-count">— ekran taslak</span>
+      </div>
+      <div class="page-sub">Takımdaki kişilerin AI tarafından çıkarılan skill graph'ı ve task routing geçmişi.</div>
+    </div>
+  </div>
+
+  <div class="empty-state">
+    <div class="empty-card">
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2 4 6v6c0 5 4 8 8 10 4-2 8-5 8-10V6l-8-4z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+      </div>
+      <h2>Skills ekranı bir sonraki turda</h2>
+      <p>Skill graph; her kişi için commit/PR/yorum verisinden çıkarılan skill yoğunluğu, son 90 günlük aktivite ve AI'nın task routing kararları için kullandığı confidence skorlarını gösterecek.</p>
+      <button class="btn btn-primary" type="button">Bu ekranı tasarla</button>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
