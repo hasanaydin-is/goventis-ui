@@ -5,7 +5,7 @@
 /* App grid (shell) */
 .app {
   display: grid;
-  grid-template-columns: 244px 1fr;
+  grid-template-columns: 188px 1fr;
   grid-template-rows: 44px 48px 1fr;
   grid-template-areas:
     "tabbar  tabbar"

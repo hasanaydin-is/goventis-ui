@@ -15,6 +15,30 @@
     html, body { height: 100%; }
     body { display: flex; flex-direction: column; background: var(--surface); }
     .main { height: 100%; }
+
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 20px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--bc);
+      background: color-mix(in srgb, var(--bc) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--bc) 25%, transparent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 130px;
+    }
+    .brand-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--bc);
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -66,6 +90,13 @@
   /* ============================================================
      Demo data — Goventis için gerçekçi içerik.
      ============================================================ */
+  const BRANDS = {
+    KD:  { name: 'Kahve Dünyası',   color: '#5b5ff0' },
+    A101:{ name: 'A101',            color: '#f4a738' },
+    VY:  { name: 'Vodafone Yanımda',color: '#e03030' },
+    MG:  { name: 'Migros',          color: '#00843d' },
+  };
+
   const PEOPLE = {
     HA: { name: 'Hasan A.', color: '#c8b6e4', text: '#2d1a55' },
     EK: { name: 'Ezgi K.',  color: '#fbcfa3', text: '#5a2f10' },
@@ -80,72 +111,72 @@
     { id:'GOV-142', title:'Implement OAuth2 SSO flow for enterprise tenants',
       labels:[{k:'auth',c:'#5b5ff0'},{k:'enterprise',c:'#f4a738'}],
       status:'prog', statusName:'In Progress', priority:'high',
-      assignee:'HA', reporter:'EK', sprint:'24', points:8, ai:87 },
+      assignee:'HA', reporter:'EK', sprint:'24', points:8, ai:87, brand:'VY' },
 
     { id:'GOV-138', title:'Refactor task assignment service for AI confidence scoring',
       labels:[{k:'ai-core',c:'#5b5ff0'}],
       status:'prog', statusName:'In Progress', priority:'high',
-      assignee:'HA', reporter:'MK', sprint:'24', points:5, ai:74 },
+      assignee:'HA', reporter:'MK', sprint:'24', points:5, ai:74, brand:'MG' },
 
     { id:'GOV-131', title:'Workflow editor: drag-to-connect arrows feel laggy on Firefox',
       labels:[{k:'bug',c:'#d2473d'},{k:'editor',c:'#6a7280'}],
       status:'prog', statusName:'In Progress', priority:'medium',
-      assignee:'HA', reporter:'SY', sprint:'24', points:3, ai:62 },
+      assignee:'HA', reporter:'SY', sprint:'24', points:3, ai:62, brand:'KD' },
 
     { id:'GOV-127', title:'Persist audit logs to Postgres + ClickHouse fan-out',
       labels:[{k:'infra',c:'#9bc7f0'}],
       status:'review', statusName:'In Review', priority:'high',
-      assignee:'HA', reporter:'BD', sprint:'24', points:5, ai:91 },
+      assignee:'HA', reporter:'BD', sprint:'24', points:5, ai:91, brand:'A101' },
 
     { id:'GOV-119', title:'Design system token migration to OKLCH',
       labels:[{k:'design-system',c:'#cfc1f5'}],
       status:'review', statusName:'In Review', priority:'medium',
-      assignee:'HA', reporter:'AC', sprint:'24', points:3, ai:88 },
+      assignee:'HA', reporter:'AC', sprint:'24', points:3, ai:88, brand:'VY' },
 
     { id:'GOV-152', title:'AI agent: write Jira comment when task moves to QA',
       labels:[{k:'ai-core',c:'#5b5ff0'},{k:'jira',c:'#9bc7f0'}],
       status:'todo', statusName:'Todo', priority:'high',
-      assignee:'HA', reporter:'EK', sprint:'24', points:5, ai:81 },
+      assignee:'HA', reporter:'EK', sprint:'24', points:5, ai:81, brand:'MG' },
 
     { id:'GOV-148', title:'Add bulk select + bulk actions to My Issues table',
       labels:[{k:'frontend',c:'#a7d8c2'}],
       status:'todo', statusName:'Todo', priority:'medium',
-      assignee:'HA', reporter:'OG', sprint:'24', points:3, ai:70 },
+      assignee:'HA', reporter:'OG', sprint:'24', points:3, ai:70, brand:'A101' },
 
     { id:'GOV-145', title:'Skill graph: weekly recompute job times out on >50k events',
       labels:[{k:'ai-core',c:'#5b5ff0'},{k:'perf',c:'#f4a738'}],
       status:'todo', statusName:'Todo', priority:'urgent',
-      assignee:'HA', reporter:'MK', sprint:'24', points:8, ai:58 },
+      assignee:'HA', reporter:'MK', sprint:'24', points:8, ai:58, brand:'KD' },
 
     { id:'GOV-141', title:'Empty state for Projects when org is brand-new',
       labels:[{k:'design',c:'#cfc1f5'}],
       status:'todo', statusName:'Todo', priority:'low',
-      assignee:'HA', reporter:'SY', sprint:'24', points:2, ai:93 },
+      assignee:'HA', reporter:'SY', sprint:'24', points:2, ai:93, brand:'MG' },
 
     { id:'GOV-137', title:'Sprint burn-down chart: misses scope changes mid-sprint',
       labels:[{k:'analytics',c:'#e6d28a'},{k:'bug',c:'#d2473d'}],
       status:'todo', statusName:'Todo', priority:'medium',
-      assignee:'HA', reporter:'BD', sprint:'24', points:3, ai:66 },
+      assignee:'HA', reporter:'BD', sprint:'24', points:3, ai:66, brand:'A101' },
 
     { id:'GOV-159', title:'Inbox: snooze + remind tomorrow',
       labels:[{k:'frontend',c:'#a7d8c2'}],
       status:'todo', statusName:'Todo', priority:'low',
-      assignee:'HA', reporter:'AC', sprint:'25', points:2, ai:79 },
+      assignee:'HA', reporter:'AC', sprint:'25', points:2, ai:79, brand:'KD' },
 
     { id:'GOV-114', title:'Fix race condition in workflow state machine',
       labels:[{k:'bug',c:'#d2473d'},{k:'workflow',c:'#5b5ff0'}],
       status:'done', statusName:'Done', priority:'urgent',
-      assignee:'HA', reporter:'MK', sprint:'23', points:5, ai:95 },
+      assignee:'HA', reporter:'MK', sprint:'23', points:5, ai:95, brand:'VY' },
 
     { id:'GOV-108', title:'Jira webhook listener for status sync',
       labels:[{k:'jira',c:'#9bc7f0'}],
       status:'done', statusName:'Done', priority:'high',
-      assignee:'HA', reporter:'EK', sprint:'23', points:5, ai:94 },
+      assignee:'HA', reporter:'EK', sprint:'23', points:5, ai:94, brand:'A101' },
 
     { id:'GOV-101', title:'Replace tooltip lib with native popover',
       labels:[{k:'frontend',c:'#a7d8c2'}],
       status:'done', statusName:'Done', priority:'low',
-      assignee:'HA', reporter:'OG', sprint:'23', points:1, ai:97 },
+      assignee:'HA', reporter:'OG', sprint:'23', points:1, ai:97, brand:'MG' },
   ];
 
   /* ============================================================
@@ -187,7 +218,9 @@
         <div class="prio-icon" title="${it.priority}">${PRIO_ICONS[it.priority] || PRIO_ICONS.medium}</div>
       </div>
       <div class="issue-row__title">${it.title}<span class="labels">${labelsHtml}</span></div>
-      <div class="issue-row__status">${STATUS_DOT[it.status]} ${it.statusName}</div>
+      <div class="issue-row__status">
+        ${it.brand && BRANDS[it.brand] ? `<span class="brand-pill" style="--bc:${BRANDS[it.brand].color}"><span class="brand-dot"></span>${BRANDS[it.brand].name}</span>` : ''}
+      </div>
       <div class="issue-row__sprint">Sprint ${it.sprint}</div>
       <div class="issue-row__ai">
         <div class="ai-bar ${aiBarClass(it.ai)}"><span style="width:${it.ai}%"></span></div>
