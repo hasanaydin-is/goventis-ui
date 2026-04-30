@@ -999,6 +999,17 @@ const WORKFLOWS = {
   },
 };
 
+const WORKFLOW_PART_LABELS = {
+  scope: 'RFP/Kapsam',
+  analysis: 'Analiz',
+  wbs: 'WBS / İş adam günü',
+  sprints: 'Sprintlerin ve tarihlerin oluşturulması',
+  tasks: 'İş tasklerinin sprint sprint oluşturulması',
+  risks: 'Risk ve bağımlılık kontrolü',
+  qa: 'UAT / QA planı',
+  release: 'Release & handoff',
+};
+
 const PROJECTS = {
   kd: {
     initials: 'KD', name: 'Kahve Dünyası', type: 'KD - Web',
@@ -1124,6 +1135,26 @@ function getStoredProjects() {
   }
 }
 
+function getStoredWorkflowOptions() {
+  try {
+    return JSON.parse(localStorage.getItem('goventisWorkflows') || '[]').map(workflow => ({
+      id: workflow.id,
+      name: workflow.name,
+      steps: (workflow.steps || []).map(step => WORKFLOW_PART_LABELS[step] || step),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function getWorkflowOptions() {
+  const base = { ...WORKFLOWS };
+  getStoredWorkflowOptions().forEach(workflow => {
+    base[workflow.id] = workflow;
+  });
+  return base;
+}
+
 function saveStoredProjects(projects) {
   localStorage.setItem('goventisProjects', JSON.stringify(projects));
 }
@@ -1134,7 +1165,8 @@ function initialsFromName(name) {
 }
 
 function projectCardHtml(p) {
-  const workflow = WORKFLOWS[p.workflowId] || WORKFLOWS.discoverySprint;
+  const workflows = getWorkflowOptions();
+  const workflow = workflows[p.workflowId] || workflows.discoverySprint;
   return `
     <div class="proj-card" onclick="openProject('${escapeHtml(p.id)}')" tabindex="0" role="button">
       <div class="proj-banner" style="background:${p.bannerBg};">
@@ -1179,7 +1211,7 @@ function renderStoredProjects() {
 }
 
 function renderWorkflowOptions() {
-  document.getElementById('workflowOptions').innerHTML = Object.values(WORKFLOWS).map((workflow, index) => `
+  document.getElementById('workflowOptions').innerHTML = Object.values(getWorkflowOptions()).map((workflow, index) => `
     <label class="workflow-option">
       <input type="radio" name="workflowId" value="${workflow.id}" ${index === 0 ? 'checked' : ''} />
       <span class="workflow-card">

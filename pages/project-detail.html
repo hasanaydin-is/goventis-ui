@@ -423,6 +423,17 @@ const WORKFLOWS = {
   },
 };
 
+const WORKFLOW_PART_LABELS = {
+  scope: 'RFP/Kapsam',
+  analysis: 'Analiz',
+  wbs: 'WBS / İş adam günü',
+  sprints: 'Sprintlerin ve tarihlerin oluşturulması',
+  tasks: 'İş tasklerinin sprint sprint oluşturulması',
+  risks: 'Risk ve bağımlılık kontrolü',
+  qa: 'UAT / QA planı',
+  release: 'Release & handoff',
+};
+
 const PROJECTS = {
   kd: {
     initials: 'KD', name: 'Kahve Dünyası', type: 'KD · Web',
@@ -578,6 +589,26 @@ function getStoredProjects() {
   }
 }
 
+function getStoredWorkflowOptions() {
+  try {
+    return JSON.parse(localStorage.getItem('goventisWorkflows') || '[]').map(workflow => ({
+      id: workflow.id,
+      name: workflow.name,
+      steps: (workflow.steps || []).map(step => WORKFLOW_PART_LABELS[step] || step),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function getWorkflowOptions() {
+  const base = { ...WORKFLOWS };
+  getStoredWorkflowOptions().forEach(workflow => {
+    base[workflow.id] = workflow;
+  });
+  return base;
+}
+
 function getProject(id) {
   const stored = getStoredProjects().find(project => project.id === id);
   if (!stored) return PROJECTS[id];
@@ -617,7 +648,8 @@ function render() {
 
   const tasks = p.tasks || [];
   const tasksHtml = tasks.map(taskRowHtml).join('');
-  const workflow = WORKFLOWS[p.workflowId] || WORKFLOWS.discoverySprint;
+  const workflows = getWorkflowOptions();
+  const workflow = workflows[p.workflowId] || workflows.discoverySprint;
   const workflowHtml = workflow.steps.map((step, index) => `
     <div class="workflow-track-step">
       <strong>${index + 1}</strong>
