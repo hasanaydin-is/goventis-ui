@@ -13,35 +13,966 @@
   <style>
     html, body { height: 100%; }
     body { display: flex; flex-direction: column; background: var(--surface); }
-    .main { height: 100%; }
+    .main { height: 100%; overflow-y: auto; }
+
+    /* ── Project grid ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 16px;
+      padding: 28px 40px 48px;
+    }
+
+    /* ── Project card ── */
+    .proj-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow .15s, border-color .15s, transform .15s;
+    }
+    .proj-card:hover {
+      box-shadow: 0 4px 20px rgba(13,17,23,.09), 0 1px 4px rgba(13,17,23,.04);
+      border-color: #d0d4db;
+      transform: translateY(-2px);
+    }
+
+    /* Banner */
+    .proj-banner {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .proj-initials {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* Card body */
+    .proj-body {
+      padding: 14px 16px 16px;
+    }
+    .proj-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+    .proj-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg);
+      flex: 1;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .proj-menu {
+      width: 24px; height: 24px;
+      border: none;
+      background: transparent;
+      border-radius: 5px;
+      color: var(--muted-2);
+      display: grid; place-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .12s, color .12s;
+    }
+    .proj-menu:hover { background: var(--hover); color: var(--fg); }
+    .proj-menu svg { width: 14px; height: 14px; }
+
+    .proj-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* Stats */
+    .proj-stats {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      border-top: 1px solid var(--border-2);
+      border-bottom: 1px solid var(--border-2);
+      margin-bottom: 12px;
+    }
+    .proj-stat {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .proj-stat svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* Members */
+    .proj-members {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .proj-avatars {
+      display: flex;
+      align-items: center;
+    }
+    .proj-av {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      display: grid; place-items: center;
+      font-size: 9.5px; font-weight: 700;
+      color: #fff;
+      margin-left: -8px;
+    }
+    .proj-av:first-child { margin-left: 0; }
+    .proj-av.more {
+      background: var(--border);
+      color: var(--muted);
+      font-size: 9px;
+    }
+    .proj-member-count {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .proj-member-count svg { width: 13px; height: 13px; }
+
+    /* ── Add new project card ── */
+    .proj-card-new {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      min-height: 195px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background .12s, border-color .12s, color .12s;
+      background: transparent;
+    }
+    .proj-card-new:hover {
+      background: var(--surface-2);
+      border-color: #c5c9d0;
+      color: var(--fg-2);
+    }
+    .proj-card-new .plus-ico {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      border: 1.5px solid currentColor;
+      display: grid; place-items: center;
+      opacity: .55;
+      transition: opacity .12s;
+    }
+    .proj-card-new:hover .plus-ico { opacity: .85; }
+    .proj-card-new .plus-ico svg { width: 16px; height: 16px; }
+    .proj-card-new .new-lbl { font-size: 13px; font-weight: 500; }
+
+    /* ── Project detail modal ── */
+    .proj-modal {
+      position: fixed;
+      z-index: 51;
+      top: 40px; bottom: 40px;
+      left: 50%; transform: translateX(-50%) translateY(14px) scale(.98);
+      width: min(820px, calc(100vw - 80px));
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .proj-modal.open {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* Modal banner */
+    .pm-banner {
+      height: 116px;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 28px;
+    }
+    .pm-logo-wrap {
+      position: relative;
+      margin-bottom: -22px;
+      z-index: 1;
+    }
+    .pm-logo {
+      width: 60px; height: 60px;
+      border-radius: 14px;
+      border: 3px solid var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      user-select: none;
+    }
+    .pm-close {
+      position: absolute;
+      top: 12px; right: 14px;
+      width: 28px; height: 28px;
+      border: none;
+      background: rgba(0,0,0,.22);
+      border-radius: 7px;
+      color: rgba(255,255,255,.9);
+      display: grid; place-items: center;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .pm-close:hover { background: rgba(0,0,0,.38); }
+    .pm-close svg { width: 13px; height: 13px; }
+
+    /* Modal header */
+    .pm-head {
+      padding: 30px 28px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+    .pm-info { flex: 1; }
+    .pm-name {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      margin: 0 0 3px;
+    }
+    .pm-type { font-size: 13px; color: var(--muted); }
+
+    .pm-chips {
+      display: flex;
+      gap: 7px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .pm-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 25px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--fg-2);
+    }
+    .pm-chip svg { width: 12px; height: 12px; color: var(--muted); }
+
+    .pm-meta-col {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .pm-meta-row {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .pm-meta-row strong { color: var(--fg-2); font-weight: 500; }
+    .pm-meta-row svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+    /* Modal tabs */
+    .pm-tabs {
+      display: flex;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .pm-tab {
+      height: 42px;
+      padding: 0 14px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color .12s, border-color .12s;
+      margin-bottom: -1px;
+    }
+    .pm-tab:hover { color: var(--fg); }
+    .pm-tab.active { color: var(--fg); border-bottom-color: var(--fg); }
+
+    /* Modal content */
+    .pm-content { flex: 1; overflow-y: auto; }
+    .pm-panel { display: none; padding: 24px 28px 40px; }
+    .pm-panel.active { display: block; }
+
+    .pm-section { margin-bottom: 26px; }
+    .pm-section-title {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin-bottom: 10px;
+    }
+
+    .pm-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .pm-detail-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      background: var(--surface-2);
+    }
+    .pm-detail-item .k {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .pm-detail-item .v {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg);
+      font-variant-numeric: tabular-nums;
+    }
+    .pm-detail-item .v.soft { font-weight: 400; color: var(--fg-2); font-size: 13px; }
+
+    /* Sprint progress */
+    .pm-sprint-track {
+      margin-top: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .pm-sprint-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .pm-sprint-label strong { color: var(--fg-2); font-weight: 500; }
+    .pm-sprint-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--border-2);
+      overflow: hidden;
+    }
+    .pm-sprint-bar > span {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width .4s ease;
+    }
+    .pm-sprint-foot {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 7px;
+      font-size: 11.5px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Issue rows in modal */
+    .pm-issue-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-2);
+      font-size: 13px;
+    }
+    .pm-issue-row:last-child { border-bottom: none; }
+    .pm-issue-id {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--muted);
+      min-width: 64px;
+      font-variant-numeric: tabular-nums;
+    }
+    .pm-issue-title { flex: 1; color: var(--fg); font-weight: 500; }
+    .pm-issue-status {
+      font-size: 11.5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    .pm-issue-status.todo { background: #f3f4f7; color: var(--muted); }
+    .pm-issue-status.prog { background: #fff8ed; color: var(--status-prog); }
+    .pm-issue-status.done { background: #edf9f3; color: var(--status-done); }
+
+    /* Member rows */
+    .pm-member-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-2);
+    }
+    .pm-member-row:last-child { border-bottom: none; }
+    .pm-member-av {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .pm-member-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--fg); }
+    .pm-member-role {
+      font-size: 11.5px;
+      color: var(--muted);
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-2);
+    }
   </style>
 </head>
 <body>
 
 <main class="main">
+
+  <!-- Page header -->
   <div class="page-head">
     <div>
       <div class="page-title-row">
         <h1 class="page-title">Projects</h1>
-        <span class="page-count">— ekran taslak</span>
+        <span class="page-count">5 proje</span>
       </div>
-      <div class="page-sub">Tüm projeler, sprint durumu ve AI workflow sağlığı.</div>
+      <div class="page-sub">Tüm projeler, sprint durumu ve ekip bilgileri.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn" type="button">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg></span>
+        Filter
+      </button>
+      <button class="btn btn-primary" type="button" onclick="openNewProject()">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        Yeni proje
+      </button>
     </div>
   </div>
 
-  <div class="empty-state">
-    <div class="empty-card">
-      <div class="ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>
-        </svg>
+  <!-- Project cards grid -->
+  <div class="projects-grid">
+
+    <!-- KD — Kahve Dünyası -->
+    <div class="proj-card" onclick="openProject('kd')" tabindex="0" role="button">
+      <div class="proj-banner" style="background:#fdf4e9;">
+        <span class="proj-initials" style="color:#c47a3a;">KD</span>
       </div>
-      <h2>Projects ekranı bir sonraki turda</h2>
-      <p>Bu turda <strong>My Issues</strong>'a odaklandık. Projeler ekranı; sprint board, AI workflow durum kartları ve Jira proje senkronu içerecek.</p>
-      <button class="btn btn-primary" type="button">Bu ekranı tasarla</button>
+      <div class="proj-body">
+        <div class="proj-title-row">
+          <span class="proj-name">Kahve Dünyası</span>
+          <button class="proj-menu" onclick="event.stopPropagation()" type="button" aria-label="Menü">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+        </div>
+        <div class="proj-sub">KD - Web</div>
+        <div class="proj-stats">
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Sprint 32
+          </span>
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 4 0h2"/></svg>
+            24 issue
+          </span>
+        </div>
+        <div class="proj-members">
+          <div class="proj-avatars">
+            <div class="proj-av" style="background:#4a7fd4;">AY</div>
+            <div class="proj-av" style="background:#9b59b6;">MK</div>
+            <div class="proj-av" style="background:#e67e22;">BT</div>
+          </div>
+          <span class="proj-member-count">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            3 üye
+          </span>
+        </div>
+      </div>
     </div>
+
+    <!-- A1 — A101 -->
+    <div class="proj-card" onclick="openProject('a1')" tabindex="0" role="button">
+      <div class="proj-banner" style="background:#fde8e8;">
+        <span class="proj-initials" style="color:#cc3333;">A1</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-title-row">
+          <span class="proj-name">A101</span>
+          <button class="proj-menu" onclick="event.stopPropagation()" type="button" aria-label="Menü">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+        </div>
+        <div class="proj-sub">Mobile App</div>
+        <div class="proj-stats">
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Sprint 14
+          </span>
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 4 0h2"/></svg>
+            18 issue
+          </span>
+        </div>
+        <div class="proj-members">
+          <div class="proj-avatars">
+            <div class="proj-av" style="background:#4a7fd4;">AY</div>
+            <div class="proj-av" style="background:#e67e22;">BT</div>
+            <div class="proj-av" style="background:#27ae60;">ZD</div>
+            <div class="proj-av more">+1</div>
+          </div>
+          <span class="proj-member-count">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            4 üye
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VF — Vodafone -->
+    <div class="proj-card" onclick="openProject('vf')" tabindex="0" role="button">
+      <div class="proj-banner" style="background:#fce8e4;">
+        <span class="proj-initials" style="color:#d94f3d;">VF</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-title-row">
+          <span class="proj-name">Vodafone</span>
+          <button class="proj-menu" onclick="event.stopPropagation()" type="button" aria-label="Menü">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+        </div>
+        <div class="proj-sub">CRM Portal</div>
+        <div class="proj-stats">
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Sprint 7
+          </span>
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 4 0h2"/></svg>
+            9 issue
+          </span>
+        </div>
+        <div class="proj-members">
+          <div class="proj-avatars">
+            <div class="proj-av" style="background:#9b59b6;">MK</div>
+            <div class="proj-av" style="background:#4a7fd4;">AY</div>
+          </div>
+          <span class="proj-member-count">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            2 üye
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SX — SunExpress -->
+    <div class="proj-card" onclick="openProject('sx')" tabindex="0" role="button">
+      <div class="proj-banner" style="background:#fef7e0;">
+        <span class="proj-initials" style="color:#d4922a;">SX</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-title-row">
+          <span class="proj-name">SunExpress</span>
+          <button class="proj-menu" onclick="event.stopPropagation()" type="button" aria-label="Menü">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+        </div>
+        <div class="proj-sub">Booking Flow</div>
+        <div class="proj-stats">
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Sprint 3
+          </span>
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 4 0h2"/></svg>
+            31 issue
+          </span>
+        </div>
+        <div class="proj-members">
+          <div class="proj-avatars">
+            <div class="proj-av" style="background:#27ae60;">ZD</div>
+            <div class="proj-av" style="background:#e67e22;">BT</div>
+            <div class="proj-av" style="background:#3498db;">CK</div>
+            <div class="proj-av more">+1</div>
+          </div>
+          <span class="proj-member-count">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            4 üye
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FR — Frink -->
+    <div class="proj-card" onclick="openProject('fr')" tabindex="0" role="button">
+      <div class="proj-banner" style="background:#f0eeff;">
+        <span class="proj-initials" style="color:#5b4fd9;">FR</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-title-row">
+          <span class="proj-name">Frink</span>
+          <button class="proj-menu" onclick="event.stopPropagation()" type="button" aria-label="Menü">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+        </div>
+        <div class="proj-sub">Design System</div>
+        <div class="proj-stats">
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Sprint 1
+          </span>
+          <span class="proj-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 4 0h2"/></svg>
+            12 issue
+          </span>
+        </div>
+        <div class="proj-members">
+          <div class="proj-avatars">
+            <div class="proj-av" style="background:#4a7fd4;">AY</div>
+            <div class="proj-av" style="background:#9b59b6;">MK</div>
+          </div>
+          <span class="proj-member-count">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            2 üye
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- New project -->
+    <div class="proj-card-new" onclick="openNewProject()" tabindex="0" role="button">
+      <div class="plus-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <span class="new-lbl">Yeni proje ekle</span>
+    </div>
+
   </div>
 </main>
+
+<!-- Overlay scrim -->
+<div class="scrim" id="scrim" onclick="closeModal()"></div>
+
+<!-- Project detail modal -->
+<div class="proj-modal" id="projModal" role="dialog" aria-modal="true">
+
+  <div class="pm-banner" id="pmBanner">
+    <div class="pm-logo-wrap">
+      <div class="pm-logo" id="pmLogo"></div>
+    </div>
+    <button class="pm-close" onclick="closeModal()" aria-label="Kapat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="pm-head">
+    <div class="pm-info">
+      <h2 class="pm-name" id="pmName"></h2>
+      <div class="pm-type" id="pmType"></div>
+      <div class="pm-chips" id="pmChips"></div>
+    </div>
+    <div class="pm-meta-col" id="pmMeta"></div>
+  </div>
+
+  <div class="pm-tabs" id="pmTabs">
+    <button class="pm-tab active" data-tab="overview">Genel Bakış</button>
+    <button class="pm-tab" data-tab="issues">Issues</button>
+    <button class="pm-tab" data-tab="members">Üyeler</button>
+  </div>
+
+  <div class="pm-content">
+    <div class="pm-panel active" id="tab-overview"></div>
+    <div class="pm-panel" id="tab-issues"></div>
+    <div class="pm-panel" id="tab-members"></div>
+  </div>
+
+</div>
+
+<script>
+const SVG = {
+  sprint: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>`,
+  issue:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 4 0h2"/></svg>`,
+  people: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  user:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  cal:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+};
+
+const PROJECTS = {
+  kd: {
+    initials: 'KD', name: 'Kahve Dünyası', type: 'KD - Web',
+    bannerBg: '#fdf4e9',
+    logoBg: 'linear-gradient(135deg, #c47a3a 0%, #e8973d 100%)',
+    sprint: 32, sprintPct: 68,
+    issues: 24, issuesDone: 16,
+    createdBy: 'Hasan Aydın', createdAt: '12 Oca 2024',
+    desc: 'Kahve Dünyası web platformu için UI yenileme ve müşteri deneyimi akışları geliştirmesi.',
+    members: [
+      { initials:'AY', name:'Hasan Aydın',  role:'Proje Lideri', color:'#4a7fd4' },
+      { initials:'MK', name:'Melih Kaya',   role:'Frontend Dev', color:'#9b59b6' },
+      { initials:'BT', name:'Berk Tunç',    role:'Backend Dev',  color:'#e67e22' },
+    ],
+    sampleIssues: [
+      { id:'KD-142', title:'Checkout flow yeniden tasarımı',  status:'prog' },
+      { id:'KD-143', title:'Mobil menü optimizasyonu',        status:'todo' },
+      { id:'KD-138', title:'Ödeme sayfası A/B testi',         status:'done' },
+      { id:'KD-135', title:'Kullanıcı onboarding akışı',      status:'done' },
+    ],
+  },
+  a1: {
+    initials: 'A1', name: 'A101', type: 'Mobile App',
+    bannerBg: '#fde8e8',
+    logoBg: 'linear-gradient(135deg, #cc3333 0%, #e84c4c 100%)',
+    sprint: 14, sprintPct: 44,
+    issues: 18, issuesDone: 8,
+    createdBy: 'Zeynep Demir', createdAt: '3 Mar 2024',
+    desc: 'A101 mobil uygulaması için yeni özellik geliştirme ve performans iyileştirmeleri.',
+    members: [
+      { initials:'AY', name:'Hasan Aydın', role:'Frontend Dev',  color:'#4a7fd4' },
+      { initials:'BT', name:'Berk Tunç',   role:'Backend Dev',   color:'#e67e22' },
+      { initials:'ZD', name:'Zeynep Demir',role:'Proje Lideri',  color:'#27ae60' },
+      { initials:'CK', name:'Can Kılıç',   role:'QA',            color:'#3498db' },
+    ],
+    sampleIssues: [
+      { id:'A1-88', title:'Push notification sistemi', status:'prog' },
+      { id:'A1-89', title:'Dark mode desteği',         status:'todo' },
+      { id:'A1-85', title:'Login ekranı yenileme',     status:'done' },
+    ],
+  },
+  vf: {
+    initials: 'VF', name: 'Vodafone', type: 'CRM Portal',
+    bannerBg: '#fce8e4',
+    logoBg: 'linear-gradient(135deg, #d94f3d 0%, #e86a5c 100%)',
+    sprint: 7, sprintPct: 82,
+    issues: 9, issuesDone: 7,
+    createdBy: 'Melih Kaya', createdAt: '18 Oca 2024',
+    desc: 'Vodafone CRM portal modernizasyonu ve Jira/Salesforce entegrasyon geliştirmeleri.',
+    members: [
+      { initials:'MK', name:'Melih Kaya',  role:'Proje Lideri', color:'#9b59b6' },
+      { initials:'AY', name:'Hasan Aydın', role:'Frontend Dev', color:'#4a7fd4' },
+    ],
+    sampleIssues: [
+      { id:'VF-44', title:'Müşteri arama filtresi',      status:'done' },
+      { id:'VF-45', title:'Rapor export özelliği',       status:'prog' },
+      { id:'VF-46', title:'Dashboard widget yenileme',   status:'todo' },
+    ],
+  },
+  sx: {
+    initials: 'SX', name: 'SunExpress', type: 'Booking Flow',
+    bannerBg: '#fef7e0',
+    logoBg: 'linear-gradient(135deg, #d4922a 0%, #f0a830 100%)',
+    sprint: 3, sprintPct: 28,
+    issues: 31, issuesDone: 9,
+    createdBy: 'Can Kılıç', createdAt: '2 Nis 2024',
+    desc: 'SunExpress uçuş rezervasyon akışı ve müşteri deneyimi geliştirmeleri, ödeme entegrasyonları.',
+    members: [
+      { initials:'ZD', name:'Zeynep Demir', role:'Frontend Dev',  color:'#27ae60' },
+      { initials:'BT', name:'Berk Tunç',    role:'Backend Dev',   color:'#e67e22' },
+      { initials:'CK', name:'Can Kılıç',    role:'Proje Lideri',  color:'#3498db' },
+      { initials:'AY', name:'Hasan Aydın',  role:'QA',            color:'#4a7fd4' },
+    ],
+    sampleIssues: [
+      { id:'SX-18', title:'Koltuk seçim UI yenileme',  status:'prog' },
+      { id:'SX-19', title:'Ödeme entegrasyonu',         status:'todo' },
+      { id:'SX-20', title:'Check-in akışı',             status:'todo' },
+    ],
+  },
+  fr: {
+    initials: 'FR', name: 'Frink', type: 'Design System',
+    bannerBg: '#f0eeff',
+    logoBg: 'linear-gradient(135deg, #5b4fd9 0%, #7b6fe8 100%)',
+    sprint: 1, sprintPct: 15,
+    issues: 12, issuesDone: 2,
+    createdBy: 'Hasan Aydın', createdAt: '22 Nis 2024',
+    desc: 'Frink design system bileşen kütüphanesi, token sistemi ve dokümantasyon geliştirmesi.',
+    members: [
+      { initials:'AY', name:'Hasan Aydın', role:'Proje Lideri', color:'#4a7fd4' },
+      { initials:'MK', name:'Melih Kaya',  role:'UI Designer',  color:'#9b59b6' },
+    ],
+    sampleIssues: [
+      { id:'FR-4', title:'Button component variants',          status:'done' },
+      { id:'FR-5', title:'Form elemanları',                    status:'prog' },
+      { id:'FR-6', title:'Token sistemi dokümantasyonu',       status:'todo' },
+    ],
+  },
+};
+
+function statusLabel(s) {
+  return s === 'todo' ? 'To Do' : s === 'prog' ? 'In Progress' : 'Done';
+}
+
+function openProject(id) {
+  const p = PROJECTS[id];
+  if (!p) return;
+
+  document.getElementById('pmBanner').style.background = p.bannerBg;
+  const logo = document.getElementById('pmLogo');
+  logo.style.background = p.logoBg;
+  logo.textContent = p.initials;
+
+  document.getElementById('pmName').textContent = p.name;
+  document.getElementById('pmType').textContent = p.type;
+
+  document.getElementById('pmChips').innerHTML = `
+    <span class="pm-chip">${SVG.sprint} Sprint ${p.sprint}</span>
+    <span class="pm-chip">${SVG.issue} ${p.issues} issue</span>
+    <span class="pm-chip">${SVG.people} ${p.members.length} üye</span>
+  `;
+
+  document.getElementById('pmMeta').innerHTML = `
+    <div class="pm-meta-row">${SVG.user} Oluşturan: <strong>${p.createdBy}</strong></div>
+    <div class="pm-meta-row">${SVG.cal} Tarih: <strong>${p.createdAt}</strong></div>
+  `;
+
+  /* Overview */
+  document.getElementById('tab-overview').innerHTML = `
+    <div class="pm-section">
+      <div class="pm-section-title">Hakkında</div>
+      <p style="font-size:13.5px;color:var(--fg-2);line-height:1.7;margin:0;">${p.desc}</p>
+    </div>
+    <div class="pm-section">
+      <div class="pm-section-title">Sprint Durumu</div>
+      <div class="pm-detail-grid">
+        <div class="pm-detail-item">
+          <div class="k">Aktif Sprint</div>
+          <div class="v">Sprint ${p.sprint}</div>
+        </div>
+        <div class="pm-detail-item">
+          <div class="k">Tamamlanan</div>
+          <div class="v">${p.issuesDone} / ${p.issues} issue</div>
+        </div>
+      </div>
+      <div class="pm-sprint-track">
+        <div class="pm-sprint-label">
+          <span>Sprint ilerlemesi</span>
+          <strong>${p.sprintPct}%</strong>
+        </div>
+        <div class="pm-sprint-bar"><span style="width:${p.sprintPct}%"></span></div>
+        <div class="pm-sprint-foot">
+          <span>${p.issuesDone} tamamlandı</span>
+          <span>${p.issues - p.issuesDone} kaldı</span>
+        </div>
+      </div>
+    </div>
+    <div class="pm-section">
+      <div class="pm-section-title">Proje Bilgileri</div>
+      <div class="pm-detail-grid">
+        <div class="pm-detail-item">
+          <div class="k">Oluşturan</div>
+          <div class="v soft">${p.createdBy}</div>
+        </div>
+        <div class="pm-detail-item">
+          <div class="k">Oluşturma Tarihi</div>
+          <div class="v soft">${p.createdAt}</div>
+        </div>
+        <div class="pm-detail-item">
+          <div class="k">Tür</div>
+          <div class="v soft">${p.type}</div>
+        </div>
+        <div class="pm-detail-item">
+          <div class="k">Ekip Büyüklüğü</div>
+          <div class="v soft">${p.members.length} kişi</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  /* Issues */
+  document.getElementById('tab-issues').innerHTML = `
+    <div class="pm-section">
+      <div class="pm-section-title">Issues (${p.issues} toplam)</div>
+      ${p.sampleIssues.map(i => `
+        <div class="pm-issue-row">
+          <span class="pm-issue-id">${i.id}</span>
+          <span class="pm-issue-title">${i.title}</span>
+          <span class="pm-issue-status ${i.status}">${statusLabel(i.status)}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  /* Members */
+  document.getElementById('tab-members').innerHTML = `
+    <div class="pm-section">
+      <div class="pm-section-title">Ekip (${p.members.length} üye)</div>
+      ${p.members.map(m => `
+        <div class="pm-member-row">
+          <div class="pm-member-av" style="background:${m.color};">${m.initials}</div>
+          <span class="pm-member-name">${m.name}</span>
+          <span class="pm-member-role">${m.role}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  /* Reset to first tab */
+  switchTab('overview');
+
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('projModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('scrim').classList.remove('open');
+  document.getElementById('projModal').classList.remove('open');
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.pm-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  document.querySelectorAll('.pm-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + name);
+  });
+}
+
+/* Tab click delegation */
+document.getElementById('pmTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.pm-tab');
+  if (btn) switchTab(btn.dataset.tab);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+function openNewProject() {
+  /* placeholder — new project form would open here */
+  alert('Yeni proje oluşturma formu burada açılacak.');
+}
+</script>
 
 </body>
 </html>
