@@ -242,14 +242,17 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+      align-items: stretch;
     }
+    .template-option { display: flex; min-width: 0; }
     .template-option input {
       position: absolute;
       opacity: 0;
       pointer-events: none;
     }
     .template-card {
-      min-height: 148px;
+      min-height: 168px;
+      width: 100%;
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       background: var(--surface);
@@ -396,7 +399,8 @@
       border-radius: var(--radius);
       background: var(--surface);
       padding: 10px 11px;
-      display: flex;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) 26px;
       align-items: center;
       gap: 10px;
       text-align: left;
@@ -849,14 +853,14 @@ function renderTemplates() {
 
 function renderParts() {
   document.getElementById('partList').innerHTML = PARTS.map(part => `
-    <button class="part-card" type="button" draggable="true" data-part-id="${part.id}">
+    <div class="part-card" role="button" tabindex="0" draggable="true" data-part-id="${part.id}">
       <span class="part-drag">${SVG.drag}</span>
       <span class="part-copy">
         <span class="part-name">${escapeHtml(part.name)}</span>
         <span class="part-desc">${escapeHtml(part.desc)}</span>
       </span>
       ${detailButton(part.desc)}
-    </button>
+    </div>
   `).join('');
 }
 
