@@ -4,6 +4,7 @@ import { initTimer }    from './timer.js';
 import { initCalendar } from './calendar.js';
 import { initModal }    from './modal.js';
 import { initChat }     from './chat.js';
+import { initAiDrawer } from './ai-drawer.js';
 
 (async function bootstrap() {
   await loadPartials([
@@ -13,6 +14,8 @@ import { initChat }     from './chat.js';
     ['[data-partial="timer-popover"]',    'partials/timer-popover.html'],
     ['[data-partial="calendar-popover"]', 'partials/calendar-popover.html'],
     ['[data-partial="modal"]',            'partials/modal.html'],
+    ['[data-partial="ai-prompt"]',        'partials/ai-prompt.html'],
+    ['[data-partial="ai-drawer"]',        'partials/ai-drawer.html'],
   ]);
 
   initTabs();
@@ -20,4 +23,5 @@ import { initChat }     from './chat.js';
   initCalendar();
   initModal();
   initChat();
+  initAiDrawer();
 })();

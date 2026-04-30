@@ -5,12 +5,25 @@
 /* App grid (shell) */
 .app {
   display: grid;
-  grid-template-columns: 188px 1fr;
+  grid-template-columns: 188px 1fr 0px;
   grid-template-rows: 48px 1fr;
   grid-template-areas:
-    "sidebar topbar"
-    "sidebar main";
+    "sidebar topbar  drawer"
+    "sidebar main    drawer";
   height: 100vh;
+  transition: grid-template-columns .24s cubic-bezier(.4,0,.2,1);
+}
+.app.drawer-open {
+  grid-template-columns: 188px 1fr 540px;
+}
+/* Slide prompt away when drawer opens */
+.ai-prompt {
+  transition: transform .28s cubic-bezier(.4,0,.2,1), opacity .2s ease;
+}
+.app.drawer-open ~ .ai-prompt {
+  transform: translateY(160%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* ───────── Window tab strip (moved into topbar) ───────── */
