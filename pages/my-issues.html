@@ -39,6 +39,19 @@
       background: var(--bc);
       flex-shrink: 0;
     }
+    .group-brand-logo {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body>
@@ -91,10 +104,10 @@
      Demo data — Goventis için gerçekçi içerik.
      ============================================================ */
   const BRANDS = {
-    KD:  { name: 'Kahve Dünyası',   color: '#5b5ff0' },
-    A101:{ name: 'A101',            color: '#f4a738' },
-    VY:  { name: 'Vodafone Yanımda',color: '#e03030' },
-    MG:  { name: 'Migros',          color: '#00843d' },
+    KD: { name: 'Kahve Dünyası', color: '#7c5c3b', initials: 'KD' },
+    VD: { name: 'Vodafone',      color: '#e60000', initials: 'VD' },
+    MG: { name: 'Migros',        color: '#004b87', initials: 'MG' },
+    IB: { name: 'İş Bankası',    color: '#ff6600', initials: 'İB' },
   };
 
   const PEOPLE = {
@@ -111,72 +124,72 @@
     { id:'GOV-142', title:'Implement OAuth2 SSO flow for enterprise tenants',
       labels:[{k:'auth',c:'#5b5ff0'},{k:'enterprise',c:'#f4a738'}],
       status:'prog', statusName:'In Progress', priority:'high',
-      assignee:'HA', reporter:'EK', sprint:'24', points:8, ai:87, brand:'VY' },
+      assignee:'HA', reporter:'EK', sprint:'24', points:8, ai:87, brand:'VD' },
 
-    { id:'GOV-138', title:'Refactor task assignment service for AI confidence scoring',
-      labels:[{k:'ai-core',c:'#5b5ff0'}],
-      status:'prog', statusName:'In Progress', priority:'high',
-      assignee:'HA', reporter:'MK', sprint:'24', points:5, ai:74, brand:'MG' },
+    { id:'GOV-119', title:'Design system token migration to OKLCH',
+      labels:[{k:'design-system',c:'#cfc1f5'}],
+      status:'review', statusName:'In Review', priority:'medium',
+      assignee:'HA', reporter:'AC', sprint:'24', points:3, ai:88, brand:'VD' },
+
+    { id:'GOV-114', title:'Fix race condition in workflow state machine',
+      labels:[{k:'bug',c:'#d2473d'},{k:'workflow',c:'#5b5ff0'}],
+      status:'done', statusName:'Done', priority:'urgent',
+      assignee:'HA', reporter:'MK', sprint:'23', points:5, ai:95, brand:'VD' },
 
     { id:'GOV-131', title:'Workflow editor: drag-to-connect arrows feel laggy on Firefox',
       labels:[{k:'bug',c:'#d2473d'},{k:'editor',c:'#6a7280'}],
       status:'prog', statusName:'In Progress', priority:'medium',
       assignee:'HA', reporter:'SY', sprint:'24', points:3, ai:62, brand:'KD' },
 
-    { id:'GOV-127', title:'Persist audit logs to Postgres + ClickHouse fan-out',
-      labels:[{k:'infra',c:'#9bc7f0'}],
-      status:'review', statusName:'In Review', priority:'high',
-      assignee:'HA', reporter:'BD', sprint:'24', points:5, ai:91, brand:'A101' },
-
-    { id:'GOV-119', title:'Design system token migration to OKLCH',
-      labels:[{k:'design-system',c:'#cfc1f5'}],
-      status:'review', statusName:'In Review', priority:'medium',
-      assignee:'HA', reporter:'AC', sprint:'24', points:3, ai:88, brand:'VY' },
-
-    { id:'GOV-152', title:'AI agent: write Jira comment when task moves to QA',
-      labels:[{k:'ai-core',c:'#5b5ff0'},{k:'jira',c:'#9bc7f0'}],
-      status:'todo', statusName:'Todo', priority:'high',
-      assignee:'HA', reporter:'EK', sprint:'24', points:5, ai:81, brand:'MG' },
-
-    { id:'GOV-148', title:'Add bulk select + bulk actions to My Issues table',
-      labels:[{k:'frontend',c:'#a7d8c2'}],
-      status:'todo', statusName:'Todo', priority:'medium',
-      assignee:'HA', reporter:'OG', sprint:'24', points:3, ai:70, brand:'A101' },
-
     { id:'GOV-145', title:'Skill graph: weekly recompute job times out on >50k events',
       labels:[{k:'ai-core',c:'#5b5ff0'},{k:'perf',c:'#f4a738'}],
       status:'todo', statusName:'Todo', priority:'urgent',
       assignee:'HA', reporter:'MK', sprint:'24', points:8, ai:58, brand:'KD' },
-
-    { id:'GOV-141', title:'Empty state for Projects when org is brand-new',
-      labels:[{k:'design',c:'#cfc1f5'}],
-      status:'todo', statusName:'Todo', priority:'low',
-      assignee:'HA', reporter:'SY', sprint:'24', points:2, ai:93, brand:'MG' },
-
-    { id:'GOV-137', title:'Sprint burn-down chart: misses scope changes mid-sprint',
-      labels:[{k:'analytics',c:'#e6d28a'},{k:'bug',c:'#d2473d'}],
-      status:'todo', statusName:'Todo', priority:'medium',
-      assignee:'HA', reporter:'BD', sprint:'24', points:3, ai:66, brand:'A101' },
 
     { id:'GOV-159', title:'Inbox: snooze + remind tomorrow',
       labels:[{k:'frontend',c:'#a7d8c2'}],
       status:'todo', statusName:'Todo', priority:'low',
       assignee:'HA', reporter:'AC', sprint:'25', points:2, ai:79, brand:'KD' },
 
-    { id:'GOV-114', title:'Fix race condition in workflow state machine',
-      labels:[{k:'bug',c:'#d2473d'},{k:'workflow',c:'#5b5ff0'}],
-      status:'done', statusName:'Done', priority:'urgent',
-      assignee:'HA', reporter:'MK', sprint:'23', points:5, ai:95, brand:'VY' },
+    { id:'GOV-138', title:'Refactor task assignment service for AI confidence scoring',
+      labels:[{k:'ai-core',c:'#5b5ff0'}],
+      status:'prog', statusName:'In Progress', priority:'high',
+      assignee:'HA', reporter:'MK', sprint:'24', points:5, ai:74, brand:'MG' },
 
-    { id:'GOV-108', title:'Jira webhook listener for status sync',
-      labels:[{k:'jira',c:'#9bc7f0'}],
-      status:'done', statusName:'Done', priority:'high',
-      assignee:'HA', reporter:'EK', sprint:'23', points:5, ai:94, brand:'A101' },
+    { id:'GOV-152', title:'AI agent: write Jira comment when task moves to QA',
+      labels:[{k:'ai-core',c:'#5b5ff0'},{k:'jira',c:'#9bc7f0'}],
+      status:'todo', statusName:'Todo', priority:'high',
+      assignee:'HA', reporter:'EK', sprint:'24', points:5, ai:81, brand:'MG' },
+
+    { id:'GOV-141', title:'Empty state for Projects when org is brand-new',
+      labels:[{k:'design',c:'#cfc1f5'}],
+      status:'todo', statusName:'Todo', priority:'low',
+      assignee:'HA', reporter:'SY', sprint:'24', points:2, ai:93, brand:'MG' },
 
     { id:'GOV-101', title:'Replace tooltip lib with native popover',
       labels:[{k:'frontend',c:'#a7d8c2'}],
       status:'done', statusName:'Done', priority:'low',
       assignee:'HA', reporter:'OG', sprint:'23', points:1, ai:97, brand:'MG' },
+
+    { id:'GOV-127', title:'Persist audit logs to Postgres + ClickHouse fan-out',
+      labels:[{k:'infra',c:'#9bc7f0'}],
+      status:'review', statusName:'In Review', priority:'high',
+      assignee:'HA', reporter:'BD', sprint:'24', points:5, ai:91, brand:'IB' },
+
+    { id:'GOV-148', title:'Add bulk select + bulk actions to My Issues table',
+      labels:[{k:'frontend',c:'#a7d8c2'}],
+      status:'todo', statusName:'Todo', priority:'medium',
+      assignee:'HA', reporter:'OG', sprint:'24', points:3, ai:70, brand:'IB' },
+
+    { id:'GOV-137', title:'Sprint burn-down chart: misses scope changes mid-sprint',
+      labels:[{k:'analytics',c:'#e6d28a'},{k:'bug',c:'#d2473d'}],
+      status:'todo', statusName:'Todo', priority:'medium',
+      assignee:'HA', reporter:'BD', sprint:'24', points:3, ai:66, brand:'IB' },
+
+    { id:'GOV-108', title:'Jira webhook listener for status sync',
+      labels:[{k:'jira',c:'#9bc7f0'}],
+      status:'done', statusName:'Done', priority:'high',
+      assignee:'HA', reporter:'EK', sprint:'23', points:5, ai:94, brand:'IB' },
   ];
 
   /* ============================================================
@@ -234,12 +247,13 @@
     </div>`;
   }
 
-  function groupBlock(label, status, items) {
+  function groupBlock(brandKey, items) {
     if (items.length === 0) return '';
+    const brand = BRANDS[brandKey];
     return `<section class="group">
       <header class="group-head">
-        <span class="group-dot ${status}"></span>
-        <span class="group-name">${label}</span>
+        <span class="group-brand-logo" style="background:${brand.color};">${brand.initials}</span>
+        <span class="group-name">${brand.name}</span>
         <span class="group-count">${items.length}</span>
         <div class="group-actions">
           <button class="icon-btn" title="Add" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -250,17 +264,15 @@
   }
 
   function renderList() {
-    const grouped = {
-      prog:   ISSUES.filter(i => i.status === 'prog'),
-      review: ISSUES.filter(i => i.status === 'review'),
-      todo:   ISSUES.filter(i => i.status === 'todo'),
-      done:   ISSUES.filter(i => i.status === 'done'),
-    };
+    const grouped = {};
+    Object.keys(BRANDS).forEach(k => {
+      grouped[k] = ISSUES.filter(i => i.brand === k);
+    });
     document.getElementById('listWrap').innerHTML =
-      groupBlock('In Progress', 'prog',   grouped.prog) +
-      groupBlock('In Review',   'review', grouped.review) +
-      groupBlock('Todo',        'todo',   grouped.todo) +
-      groupBlock('Done',        'done',   grouped.done);
+      Object.keys(BRANDS)
+        .filter(k => grouped[k].length > 0)
+        .map(k => groupBlock(k, grouped[k]))
+        .join('');
     document.getElementById('totalCount').textContent = `${ISSUES.length} issues`;
 
     document.querySelectorAll('.issue-row').forEach(r => {
