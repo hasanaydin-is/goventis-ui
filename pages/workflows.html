@@ -265,6 +265,23 @@
       background: var(--accent-2);
       box-shadow: inset 0 0 0 1px var(--accent);
     }
+    .template-card.custom-template {
+      border-style: dashed;
+      border-width: 2px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--surface-2);
+    }
+    .template-option input:checked + .template-card.custom-template {
+      border-color: var(--accent);
+      background: var(--accent-2);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+    .custom-template .new-ico {
+      color: var(--accent);
+      opacity: .9;
+    }
     .template-name {
       color: var(--fg);
       font-size: 14px;
@@ -294,12 +311,12 @@
       border-radius: var(--radius-lg);
       background: var(--surface-2);
       padding: 16px;
+      margin-bottom: 14px;
     }
     .workflow-meta-grid {
-      display: grid;
-      grid-template-columns: minmax(220px, .9fr) minmax(340px, 1.1fr);
+      display: flex;
+      flex-direction: column;
       gap: 14px;
-      align-items: start;
     }
     .builder-columns {
       display: grid;
@@ -608,45 +625,51 @@
 
   <div class="wf-body">
     <section class="wf-panel active" id="templatePanel">
+      <div class="workflow-meta">
+        <div class="workflow-meta-grid">
+          <label class="form-row">
+            <span class="form-label">Workflow adı</span>
+            <input class="form-input" id="workflowName" type="text" />
+          </label>
+          <label class="form-row">
+            <span class="form-label">Workflow açıklaması</span>
+            <textarea class="form-textarea" id="workflowDesc"></textarea>
+          </label>
+        </div>
+      </div>
       <div class="template-grid" id="templateGrid"></div>
     </section>
 
     <section class="wf-panel" id="builderPanel">
       <div class="builder-grid">
-        <div class="builder-panel">
-          <div class="builder-head">
-            <div>
-              <h3 class="builder-title">Workflow parçaları</h3>
-              <p class="builder-sub">Parçaları canvas alanına sürükle.</p>
+        <div class="builder-columns">
+          <div class="builder-panel">
+            <div class="builder-head">
+              <div>
+                <h3 class="builder-title">Bulunan akışlar</h3>
+                <p class="builder-sub">Parçaları canvas alanına sürükle.</p>
+              </div>
+            </div>
+            <div class="builder-body">
+              <div class="part-list" id="partList"></div>
             </div>
           </div>
-          <div class="builder-body">
-            <label class="form-row">
-              <span class="form-label">Workflow adı</span>
-              <input class="form-input" id="workflowName" type="text" />
-            </label>
-            <label class="form-row">
-              <span class="form-label">Açıklama</span>
-              <textarea class="form-textarea" id="workflowDesc"></textarea>
-            </label>
-            <div class="part-list" id="partList"></div>
-          </div>
-        </div>
 
-        <div class="builder-panel">
-          <div class="builder-head">
-            <div>
-              <h3 class="builder-title">Workflow canvas</h3>
-              <p class="builder-sub">Sıralamayı drag/drop ile değiştir, istemediğin adımı kaldır.</p>
+          <div class="builder-panel">
+            <div class="builder-head">
+              <div>
+                <h3 class="builder-title">Oluştur</h3>
+                <p class="builder-sub">Sıralamayı drag/drop ile değiştir, istemediğin adımı kaldır.</p>
+              </div>
+              <span class="workflow-chip" id="canvasCount">0 adım</span>
             </div>
-            <span class="workflow-chip" id="canvasCount">0 adım</span>
-          </div>
-          <div class="builder-body">
-            <label class="review-toggle">
-              <input type="checkbox" id="firstStepAi" />
-              1. adıma AI review ekle
-            </label>
-            <div class="canvas" id="canvas"></div>
+            <div class="builder-body">
+              <label class="review-toggle">
+                <input type="checkbox" id="firstStepAi" />
+                1. adıma AI review ekle
+              </label>
+              <div class="canvas" id="canvas"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -769,10 +792,13 @@ function workflowCard(workflow) {
           <h3 class="workflow-card-title">${escapeHtml(workflow.name)}</h3>
           <p class="workflow-card-desc">${escapeHtml(workflow.desc)}</p>
         </div>
-        <span class="workflow-chip">${SVG.workflow}${steps.length} adım</span>
+        <div class="workflow-card-actions">
+          ${detailButton(workflow.desc)}
+          <span class="workflow-chip">${SVG.workflow}${steps.length} adım</span>
+        </div>
       </div>
       <div class="workflow-steps-mini">
-        ${steps.map((step, index) => `<span class="mini-step"><strong>${index + 1}</strong>${escapeHtml(step.name)}${detailButton(step.desc)}</span>`).join('')}
+        ${steps.map((step, index) => `<span class="mini-step"><strong>${index + 1}</strong>${escapeHtml(step.name)}</span>`).join('')}
       </div>
     </article>
   `;
@@ -800,7 +826,7 @@ function templateOption(template) {
         <span class="template-name">${escapeHtml(template.name)}</span>
         <span class="template-desc">${escapeHtml(template.desc)}</span>
         <span class="template-steps">
-          ${steps.map((step, index) => `<span class="mini-step"><strong>${index + 1}</strong>${escapeHtml(step.name)}${detailButton(step.desc)}</span>`).join('')}
+          ${steps.map((step, index) => `<span class="mini-step"><strong>${index + 1}</strong>${escapeHtml(step.name)}</span>`).join('')}
         </span>
       </span>
     </label>
@@ -812,10 +838,10 @@ function renderTemplates() {
     ${DEFAULT_WORKFLOWS.map(templateOption).join('')}
     <label class="template-option">
       <input type="radio" name="template" value="custom" ${selectedTemplate === 'custom' ? 'checked' : ''} />
-      <span class="template-card">
+      <span class="template-card custom-template">
+        <span class="new-ico">${SVG.plus}</span>
         <span class="template-name">Ben kendim oluşturmak istiyorum</span>
         <span class="template-desc">Boş canvas ile başlayıp parçaları drag/drop ile kendin sırala.</span>
-        <span class="template-steps"><span class="mini-step"><strong>0</strong>Boş canvas</span></span>
       </span>
     </label>
   `;
