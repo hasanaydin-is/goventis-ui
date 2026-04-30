@@ -135,6 +135,71 @@
     }
     .proj-chip svg { width: 10px; height: 10px; color: var(--muted); }
 
+    .workflow-detail {
+      margin: 0 40px 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface-2);
+    }
+    .workflow-detail-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .workflow-detail-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .workflow-detail-title svg {
+      width: 14px;
+      height: 14px;
+      color: var(--muted);
+    }
+    .workflow-detail-count {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .workflow-track {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .workflow-track-step {
+      min-width: 0;
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 10px;
+    }
+    .workflow-track-step strong {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      color: var(--accent);
+      font-size: 10.5px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 7px;
+    }
+    .workflow-track-step span {
+      display: block;
+      font-size: 11.5px;
+      color: var(--fg-2);
+      line-height: 1.35;
+    }
+
     /* Mini progress */
     .proj-progress {
       display: flex;
@@ -334,6 +399,30 @@
 <main class="main" id="mainWrap"><!-- populated by JS --></main>
 
 <script>
+const WORKFLOWS = {
+  discoverySprint: {
+    id: 'discoverySprint',
+    name: 'Discovery to Sprint Delivery',
+    steps: [
+      'RFP/Kapsam',
+      'Analiz',
+      'WBS / İş adam günü',
+      'Sprintlerin ve tarihlerin oluşturulması',
+      'İş tasklerinin sprint sprint oluşturulması',
+    ],
+  },
+  enterpriseAnalysis: {
+    id: 'enterpriseAnalysis',
+    name: 'Enterprise Analysis',
+    steps: ['Kapsam', 'Paydaş analizi', 'Teknik çözüm', 'Roadmap', 'Sprint planı'],
+  },
+  designSystem: {
+    id: 'designSystem',
+    name: 'Design System Build',
+    steps: ['Audit', 'Token haritası', 'Component set', 'Dokümantasyon', 'Release'],
+  },
+};
+
 const PROJECTS = {
   kd: {
     initials: 'KD', name: 'Kahve Dünyası', type: 'KD · Web',
@@ -343,6 +432,7 @@ const PROJECTS = {
     issues: 24, issuesDone: 16,
     createdBy: 'Hasan Aydın', createdAt: '12 Oca 2024',
     desc: 'Kahve Dünyası web platformu için UI yenileme ve müşteri deneyimi akışları geliştirmesi.',
+    workflowId: 'discoverySprint',
     members: [
       { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın' },
       { initials:'MK', color:'#9b59b6', name:'Melih Kaya'  },
@@ -366,6 +456,7 @@ const PROJECTS = {
     issues: 18, issuesDone: 8,
     createdBy: 'Zeynep Demir', createdAt: '3 Mar 2024',
     desc: 'A101 mobil uygulaması için yeni özellik geliştirme ve performans iyileştirmeleri.',
+    workflowId: 'discoverySprint',
     members: [
       { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın'  },
       { initials:'BT', color:'#e67e22', name:'Berk Tunç'    },
@@ -390,6 +481,7 @@ const PROJECTS = {
     issues: 9, issuesDone: 7,
     createdBy: 'Melih Kaya', createdAt: '18 Oca 2024',
     desc: 'Vodafone CRM portal modernizasyonu ve Jira/Salesforce entegrasyon geliştirmeleri.',
+    workflowId: 'enterpriseAnalysis',
     members: [
       { initials:'MK', color:'#9b59b6', name:'Melih Kaya'  },
       { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın' },
@@ -410,6 +502,7 @@ const PROJECTS = {
     issues: 31, issuesDone: 9,
     createdBy: 'Can Kılıç', createdAt: '2 Nis 2024',
     desc: 'SunExpress uçuş rezervasyon akışı ve müşteri deneyimi geliştirmeleri, ödeme entegrasyonları.',
+    workflowId: 'discoverySprint',
     members: [
       { initials:'ZD', color:'#27ae60', name:'Zeynep Demir' },
       { initials:'BT', color:'#e67e22', name:'Berk Tunç'    },
@@ -432,6 +525,7 @@ const PROJECTS = {
     issues: 12, issuesDone: 2,
     createdBy: 'Hasan Aydın', createdAt: '22 Nis 2024',
     desc: 'Frink design system bileşen kütüphanesi, token sistemi ve dokümantasyon geliştirmesi.',
+    workflowId: 'designSystem',
     members: [
       { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın' },
       { initials:'MK', color:'#9b59b6', name:'Melih Kaya'  },
@@ -464,7 +558,35 @@ const SVG = {
   filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>`,
   plus:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>`,
   more:   `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>`,
+  workflow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>`,
 };
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getStoredProjects() {
+  try {
+    return JSON.parse(localStorage.getItem('goventisProjects') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function getProject(id) {
+  const stored = getStoredProjects().find(project => project.id === id);
+  if (!stored) return PROJECTS[id];
+  return {
+    stripColor: '#1a7a4a',
+    tasks: [],
+    ...stored,
+  };
+}
 
 function taskRowHtml(t) {
   return `<div class="task-row" data-task-id="${t.id}">
@@ -481,7 +603,7 @@ function taskRowHtml(t) {
 
 function render() {
   const id = new URLSearchParams(location.search).get('id') || 'kd';
-  const p  = PROJECTS[id];
+  const p  = getProject(id);
   if (!p) {
     document.getElementById('mainWrap').innerHTML = '<p style="padding:40px;color:var(--muted)">Proje bulunamadı.</p>';
     return;
@@ -493,7 +615,15 @@ function render() {
     `<div class="proj-av" style="background:${m.color};" title="${m.name}">${m.initials}</div>`
   ).join('');
 
-  const tasksHtml = p.tasks.map(taskRowHtml).join('');
+  const tasks = p.tasks || [];
+  const tasksHtml = tasks.map(taskRowHtml).join('');
+  const workflow = WORKFLOWS[p.workflowId] || WORKFLOWS.discoverySprint;
+  const workflowHtml = workflow.steps.map((step, index) => `
+    <div class="workflow-track-step">
+      <strong>${index + 1}</strong>
+      <span>${escapeHtml(step)}</span>
+    </div>
+  `).join('');
 
   document.getElementById('mainWrap').innerHTML = `
     <div class="proj-strip" style="background:${p.stripColor};"></div>
@@ -521,6 +651,7 @@ function render() {
             </span>
             <span class="proj-chip">${SVG.sprint} Sprint ${p.sprint}</span>
             <span class="proj-chip">${SVG.issue} ${p.issues} issue</span>
+            <span class="proj-chip">${SVG.workflow} ${workflow.name}</span>
             <div class="proj-progress">
               <div class="proj-progress-bar"><span style="width:${p.sprintPct}%"></span></div>
               <span class="proj-progress-pct">${p.sprintPct}%</span>
@@ -536,11 +667,19 @@ function render() {
       </div>
     </div>
 
+    <div class="workflow-detail">
+      <div class="workflow-detail-head">
+        <div class="workflow-detail-title">${SVG.workflow} ${workflow.name}</div>
+        <div class="workflow-detail-count">${workflow.steps.length} adım</div>
+      </div>
+      <div class="workflow-track">${workflowHtml}</div>
+    </div>
+
     <div class="proj-divider"></div>
 
     <div class="task-head">
       <div class="task-head-title">
-        Tasks <span class="task-total">${p.tasks.length}</span>
+        Tasks <span class="task-total">${tasks.length}</span>
       </div>
     </div>
 
@@ -562,7 +701,7 @@ function render() {
   /* Open task modal (same as My Issues) via postMessage to parent shell */
   document.querySelectorAll('.task-row').forEach(row => {
     row.addEventListener('click', () => {
-      const task = p.tasks.find(t => t.id === row.dataset.taskId);
+      const task = tasks.find(t => t.id === row.dataset.taskId);
       if (!task) return;
       if (window.parent !== window) {
         window.parent.postMessage({

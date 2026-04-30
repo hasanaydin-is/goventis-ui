@@ -124,19 +124,43 @@ function populateProjModal(p) {
   const globalScrim = document.getElementById('globalScrim');
   const contentFrame = document.getElementById('contentFrame');
 
-  function openProjModal(p) {
-    populateProjModal(p);
-    document.getElementById('parentProjModal').classList.add('open');
+  function showGlobalScrim(onClick) {
     globalScrim.style.opacity = '1';
     globalScrim.style.pointerEvents = 'auto';
-    globalScrim.onclick = closeProjModal;
+    globalScrim.onclick = onClick;
+  }
+
+  function hideGlobalScrim() {
+    globalScrim.style.opacity = '0';
+    globalScrim.style.pointerEvents = 'none';
+    globalScrim.onclick = null;
+  }
+
+  function openIframeModalOverlay() {
+    document.body.classList.add('modal-open');
+    contentFrame.classList.add('modal-host');
+    showGlobalScrim(() => {
+      contentFrame.contentWindow?.postMessage({ type: 'closeModal' }, '*');
+    });
+  }
+
+  function closeIframeModalOverlay() {
+    contentFrame.classList.remove('modal-host');
+    document.body.classList.remove('modal-open');
+    hideGlobalScrim();
+  }
+
+  function openProjModal(p) {
+    populateProjModal(p);
+    document.body.classList.add('modal-open');
+    document.getElementById('parentProjModal').classList.add('open');
+    showGlobalScrim(closeProjModal);
   }
 
   function closeProjModal() {
     document.getElementById('parentProjModal').classList.remove('open');
-    globalScrim.style.opacity = '0';
-    globalScrim.style.pointerEvents = 'none';
-    globalScrim.onclick = null;
+    document.body.classList.remove('modal-open');
+    hideGlobalScrim();
   }
 
   /* Tab switching inside the parent modal */
@@ -174,6 +198,11 @@ function populateProjModal(p) {
 
     if (e.data.type === 'projModalClose') {
       closeProjModal();
+    }
+
+    if (e.data.type === 'modalState') {
+      if (e.data.open) openIframeModalOverlay();
+      else closeIframeModalOverlay();
     }
   });
 })();

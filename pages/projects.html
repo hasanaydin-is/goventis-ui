@@ -90,7 +90,28 @@
     .proj-sub {
       font-size: 12px;
       color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .proj-workflow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
       margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 11.5px;
+    }
+    .proj-workflow svg {
+      width: 13px;
+      height: 13px;
+      color: var(--muted-2);
+      flex-shrink: 0;
+    }
+    .proj-workflow span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     /* Stats */
@@ -457,6 +478,169 @@
       background: var(--surface-2);
       border: 1px solid var(--border-2);
     }
+
+    /* ── Create project modal ── */
+    .create-modal {
+      position: fixed;
+      z-index: 52;
+      top: 50%;
+      left: 50%;
+      width: min(620px, calc(100vw - 80px));
+      max-height: calc(100vh - 80px);
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, calc(-50% + 14px)) scale(.98);
+      transition: opacity .18s ease, transform .18s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .create-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .create-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .create-title {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+    .create-sub {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .create-close {
+      width: 30px;
+      height: 30px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .create-close:hover { background: var(--hover); color: var(--fg); }
+    .create-close svg { width: 15px; height: 15px; }
+    .create-body {
+      padding: 20px 24px 22px;
+      overflow-y: auto;
+    }
+    .form-grid { display: grid; gap: 14px; }
+    .form-field { display: grid; gap: 7px; }
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--fg-2);
+    }
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--fg);
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .12s, box-shadow .12s;
+    }
+    .form-input {
+      height: 36px;
+      padding: 0 11px;
+    }
+    .form-textarea {
+      min-height: 84px;
+      resize: vertical;
+      padding: 10px 11px;
+      line-height: 1.45;
+    }
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-2);
+    }
+    .workflow-options {
+      display: grid;
+      gap: 8px;
+    }
+    .workflow-option input { position: absolute; opacity: 0; pointer-events: none; }
+    .workflow-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 11px 12px;
+      cursor: pointer;
+      display: grid;
+      gap: 8px;
+      transition: border-color .12s, background .12s, box-shadow .12s;
+    }
+    .workflow-option input:checked + .workflow-card {
+      border-color: var(--accent);
+      background: var(--accent-2);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+    .workflow-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .workflow-card-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .workflow-count {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .workflow-steps {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .workflow-step {
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      color: var(--fg-2);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .workflow-step strong {
+      color: var(--muted-2);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .create-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 18px;
+    }
   </style>
 </head>
 <body>
@@ -485,7 +669,7 @@
   </div>
 
   <!-- Project cards grid -->
-  <div class="projects-grid">
+  <div class="projects-grid" id="projectsGrid">
 
     <!-- KD — Kahve Dünyası -->
     <div class="proj-card" onclick="openProject('kd')" tabindex="0" role="button">
@@ -500,6 +684,10 @@
           </button>
         </div>
         <div class="proj-sub">KD - Web</div>
+        <div class="proj-workflow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>
+          <span>Discovery to Sprint Delivery</span>
+        </div>
         <div class="proj-stats">
           <span class="proj-stat">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
@@ -537,6 +725,10 @@
           </button>
         </div>
         <div class="proj-sub">Mobile App</div>
+        <div class="proj-workflow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>
+          <span>Discovery to Sprint Delivery</span>
+        </div>
         <div class="proj-stats">
           <span class="proj-stat">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
@@ -575,6 +767,10 @@
           </button>
         </div>
         <div class="proj-sub">CRM Portal</div>
+        <div class="proj-workflow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>
+          <span>Enterprise Analysis</span>
+        </div>
         <div class="proj-stats">
           <span class="proj-stat">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
@@ -611,6 +807,10 @@
           </button>
         </div>
         <div class="proj-sub">Booking Flow</div>
+        <div class="proj-workflow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>
+          <span>Discovery to Sprint Delivery</span>
+        </div>
         <div class="proj-stats">
           <span class="proj-stat">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
@@ -649,6 +849,10 @@
           </button>
         </div>
         <div class="proj-sub">Design System</div>
+        <div class="proj-workflow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>
+          <span>Design System Build</span>
+        </div>
         <div class="proj-stats">
           <span class="proj-stat">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
@@ -721,6 +925,46 @@
 
 </div>
 
+<!-- Create project modal -->
+<div class="create-modal" id="createProjectModal" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle">
+  <div class="create-head">
+    <div>
+      <h2 class="create-title" id="createProjectTitle">Yeni proje oluştur</h2>
+      <p class="create-sub">Proje bilgilerini gir ve daha önce tanımlanmış workflow akışlarından birini seç.</p>
+    </div>
+    <button class="create-close" type="button" onclick="closeModal()" aria-label="Kapat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <form class="create-body" id="createProjectForm">
+    <div class="form-grid">
+      <label class="form-field">
+        <span class="form-label">Proje adı</span>
+        <input class="form-input" id="newProjectName" name="projectName" type="text" placeholder="Örn. Migros Web" required />
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Açıklama</span>
+        <textarea class="form-textarea" id="newProjectDesc" name="projectDesc" placeholder="Projenin kapsamını kısa şekilde yaz." required></textarea>
+      </label>
+
+      <div class="form-field">
+        <span class="form-label">Workflow</span>
+        <div class="workflow-options" id="workflowOptions"></div>
+      </div>
+    </div>
+
+    <div class="create-actions">
+      <button class="btn" type="button" onclick="closeModal()">Vazgeç</button>
+      <button class="btn btn-primary" type="submit">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        Proje oluştur
+      </button>
+    </div>
+  </form>
+</div>
+
 <script>
 const SVG = {
   sprint: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>`,
@@ -728,6 +972,31 @@ const SVG = {
   people: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
   user:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
   cal:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+  workflow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>`,
+};
+
+const WORKFLOWS = {
+  discoverySprint: {
+    id: 'discoverySprint',
+    name: 'Discovery to Sprint Delivery',
+    steps: [
+      'RFP/Kapsam',
+      'Analiz',
+      'WBS / İş adam günü',
+      'Sprintlerin ve tarihlerin oluşturulması',
+      'İş tasklerinin sprint sprint oluşturulması',
+    ],
+  },
+  enterpriseAnalysis: {
+    id: 'enterpriseAnalysis',
+    name: 'Enterprise Analysis',
+    steps: ['Kapsam', 'Paydaş analizi', 'Teknik çözüm', 'Roadmap', 'Sprint planı'],
+  },
+  designSystem: {
+    id: 'designSystem',
+    name: 'Design System Build',
+    steps: ['Audit', 'Token haritası', 'Component set', 'Dokümantasyon', 'Release'],
+  },
 };
 
 const PROJECTS = {
@@ -739,6 +1008,7 @@ const PROJECTS = {
     issues: 24, issuesDone: 16,
     createdBy: 'Hasan Aydın', createdAt: '12 Oca 2024',
     desc: 'Kahve Dünyası web platformu için UI yenileme ve müşteri deneyimi akışları geliştirmesi.',
+    workflowId: 'discoverySprint',
     members: [
       { initials:'AY', name:'Hasan Aydın',  role:'Proje Lideri', color:'#4a7fd4' },
       { initials:'MK', name:'Melih Kaya',   role:'Frontend Dev', color:'#9b59b6' },
@@ -759,6 +1029,7 @@ const PROJECTS = {
     issues: 18, issuesDone: 8,
     createdBy: 'Zeynep Demir', createdAt: '3 Mar 2024',
     desc: 'A101 mobil uygulaması için yeni özellik geliştirme ve performans iyileştirmeleri.',
+    workflowId: 'discoverySprint',
     members: [
       { initials:'AY', name:'Hasan Aydın', role:'Frontend Dev',  color:'#4a7fd4' },
       { initials:'BT', name:'Berk Tunç',   role:'Backend Dev',   color:'#e67e22' },
@@ -779,6 +1050,7 @@ const PROJECTS = {
     issues: 9, issuesDone: 7,
     createdBy: 'Melih Kaya', createdAt: '18 Oca 2024',
     desc: 'Vodafone CRM portal modernizasyonu ve Jira/Salesforce entegrasyon geliştirmeleri.',
+    workflowId: 'enterpriseAnalysis',
     members: [
       { initials:'MK', name:'Melih Kaya',  role:'Proje Lideri', color:'#9b59b6' },
       { initials:'AY', name:'Hasan Aydın', role:'Frontend Dev', color:'#4a7fd4' },
@@ -797,6 +1069,7 @@ const PROJECTS = {
     issues: 31, issuesDone: 9,
     createdBy: 'Can Kılıç', createdAt: '2 Nis 2024',
     desc: 'SunExpress uçuş rezervasyon akışı ve müşteri deneyimi geliştirmeleri, ödeme entegrasyonları.',
+    workflowId: 'discoverySprint',
     members: [
       { initials:'ZD', name:'Zeynep Demir', role:'Frontend Dev',  color:'#27ae60' },
       { initials:'BT', name:'Berk Tunç',    role:'Backend Dev',   color:'#e67e22' },
@@ -817,6 +1090,7 @@ const PROJECTS = {
     issues: 12, issuesDone: 2,
     createdBy: 'Hasan Aydın', createdAt: '22 Nis 2024',
     desc: 'Frink design system bileşen kütüphanesi, token sistemi ve dokümantasyon geliştirmesi.',
+    workflowId: 'designSystem',
     members: [
       { initials:'AY', name:'Hasan Aydın', role:'Proje Lideri', color:'#4a7fd4' },
       { initials:'MK', name:'Melih Kaya',  role:'UI Designer',  color:'#9b59b6' },
@@ -833,15 +1107,107 @@ function statusLabel(s) {
   return s === 'todo' ? 'To Do' : s === 'prog' ? 'In Progress' : 'Done';
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getStoredProjects() {
+  try {
+    return JSON.parse(localStorage.getItem('goventisProjects') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredProjects(projects) {
+  localStorage.setItem('goventisProjects', JSON.stringify(projects));
+}
+
+function initialsFromName(name) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  return (words[0]?.[0] || 'P').toUpperCase() + (words[1]?.[0] || words[0]?.[1] || 'R').toUpperCase();
+}
+
+function projectCardHtml(p) {
+  const workflow = WORKFLOWS[p.workflowId] || WORKFLOWS.discoverySprint;
+  return `
+    <div class="proj-card" onclick="openProject('${escapeHtml(p.id)}')" tabindex="0" role="button">
+      <div class="proj-banner" style="background:${p.bannerBg};">
+        <span class="proj-initials" style="color:${p.initialColor};">${escapeHtml(p.initials)}</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-title-row">
+          <span class="proj-name">${escapeHtml(p.name)}</span>
+          <button class="proj-menu" onclick="event.stopPropagation()" type="button" aria-label="Menü">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+        </div>
+        <div class="proj-sub">${escapeHtml(p.type)}</div>
+        <div class="proj-workflow">${SVG.workflow}<span>${escapeHtml(workflow.name)}</span></div>
+        <div class="proj-stats">
+          <span class="proj-stat">${SVG.sprint} Sprint ${p.sprint}</span>
+          <span class="proj-stat">${SVG.issue} ${p.issues} issue</span>
+        </div>
+        <div class="proj-members">
+          <div class="proj-avatars">
+            ${p.members.slice(0, 3).map(m => `<div class="proj-av" style="background:${m.color};">${escapeHtml(m.initials)}</div>`).join('')}
+          </div>
+          <span class="proj-member-count">${SVG.people} ${p.members.length} üye</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderStoredProjects() {
+  const newCard = document.querySelector('.proj-card-new');
+  document.querySelectorAll('.proj-card[data-generated="true"]').forEach(card => card.remove());
+  getStoredProjects().forEach(project => {
+    const template = document.createElement('template');
+    template.innerHTML = projectCardHtml(project).trim();
+    const card = template.content.firstElementChild;
+    card.dataset.generated = 'true';
+    newCard.before(card);
+  });
+  const count = Object.keys(PROJECTS).length + getStoredProjects().length;
+  document.querySelector('.page-count').textContent = `${count} proje`;
+}
+
+function renderWorkflowOptions() {
+  document.getElementById('workflowOptions').innerHTML = Object.values(WORKFLOWS).map((workflow, index) => `
+    <label class="workflow-option">
+      <input type="radio" name="workflowId" value="${workflow.id}" ${index === 0 ? 'checked' : ''} />
+      <span class="workflow-card">
+        <span class="workflow-card-head">
+          <span class="workflow-card-name">${escapeHtml(workflow.name)}</span>
+          <span class="workflow-count">${workflow.steps.length} adım</span>
+        </span>
+        <span class="workflow-steps">
+          ${workflow.steps.map((step, stepIndex) => `<span class="workflow-step"><strong>${stepIndex + 1}</strong>${escapeHtml(step)}</span>`).join('')}
+        </span>
+      </span>
+    </label>
+  `).join('');
+}
+
 function openProject(id) {
-  const p = PROJECTS[id];
+  const p = PROJECTS[id] || getStoredProjects().find(project => project.id === id);
   if (!p) return;
   window.location.href = 'project-detail.html?id=' + id;
 }
 
 function closeModal() {
   document.getElementById('projModal').classList.remove('open');
+  document.getElementById('createProjectModal').classList.remove('open');
   document.getElementById('scrim').classList.remove('open');
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'modalState', open: false }, '*');
+  }
 }
 
 function switchTab(name) {
@@ -869,8 +1235,55 @@ window.addEventListener('message', e => {
 });
 
 function openNewProject() {
-  alert('Yeni proje oluşturma formu burada açılacak.');
+  document.getElementById('createProjectForm').reset();
+  document.querySelector('[name="workflowId"]').checked = true;
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('createProjectModal').classList.add('open');
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'modalState', open: true }, '*');
+  }
+  setTimeout(() => document.getElementById('newProjectName').focus(), 0);
 }
+
+document.getElementById('createProjectForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const form = new FormData(e.currentTarget);
+  const name = String(form.get('projectName') || '').trim();
+  const desc = String(form.get('projectDesc') || '').trim();
+  const workflowId = String(form.get('workflowId') || 'discoverySprint');
+  if (!name || !desc) return;
+
+  const project = {
+    id: 'custom-' + Date.now().toString(36),
+    initials: initialsFromName(name),
+    name,
+    type: 'Yeni Proje',
+    bannerBg: '#edf7f3',
+    initialColor: '#1a7a4a',
+    logoBg: 'linear-gradient(135deg, #1a7a4a 0%, #38a169 100%)',
+    sprint: 0,
+    sprintPct: 0,
+    issues: 0,
+    issuesDone: 0,
+    createdBy: 'Hasan Aydın',
+    createdAt: 'Bugün',
+    desc,
+    workflowId,
+    members: [
+      { initials:'AY', name:'Hasan Aydın', role:'Proje Lideri', color:'#4a7fd4' },
+    ],
+    sampleIssues: [],
+  };
+
+  const projects = getStoredProjects();
+  projects.push(project);
+  saveStoredProjects(projects);
+  renderStoredProjects();
+  closeModal();
+});
+
+renderWorkflowOptions();
+renderStoredProjects();
 </script>
 
 </body>

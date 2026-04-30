@@ -25,6 +25,11 @@
   opacity: 0;
   pointer-events: none;
 }
+body.modal-open .ai-prompt {
+  transform: translateY(160%);
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* ───────── Window tab strip (moved into topbar) ───────── */
 .tabbar { display: none; }
@@ -906,6 +911,10 @@
   width: 100%;
   height: 100%;
   background: var(--surface);
+}
+.main-frame.modal-host {
+  position: relative;
+  z-index: 501;
 }
 
 /* ───────── Page header ───────── */

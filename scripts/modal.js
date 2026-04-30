@@ -28,6 +28,7 @@ export function initModal() {
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'overview'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === 'overview'));
     document.getElementById('modalBody').scrollTop = 0;
+    document.body.classList.add('modal-open');
     scrim.classList.add('open');
     modal.classList.add('open');
   }
@@ -35,6 +36,7 @@ export function initModal() {
   function closeModal() {
     scrim.classList.remove('open');
     modal.classList.remove('open');
+    document.body.classList.remove('modal-open');
   }
 
   scrim.addEventListener('click', closeModal);
