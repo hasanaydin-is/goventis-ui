@@ -13,104 +13,144 @@
   <style>
     html, body { height: 100%; }
     body { display: flex; flex-direction: column; background: var(--surface); }
-    .main { height: 100%; overflow: auto; display: flex; flex-direction: column; }
+    .main { height: 100%; overflow: hidden; display: flex; flex-direction: column; }
 
-    .workflow-page { padding: 24px 40px 48px; }
-    .workflow-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 14px;
-    }
-    .workflow-card,
-    .workflow-new-card {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      background: var(--surface);
-      min-height: 178px;
-      padding: 15px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: border-color .12s, box-shadow .12s, transform .12s, background .12s;
-    }
-    .workflow-card:hover {
-      border-color: #d0d4db;
-      box-shadow: 0 4px 20px rgba(13,17,23,.08), 0 1px 4px rgba(13,17,23,.04);
-      transform: translateY(-1px);
-    }
-    .workflow-card { cursor: pointer; }
-    .workflow-new-card {
-      border: 2px dashed var(--border);
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      cursor: pointer;
-      gap: 10px;
-    }
-    .workflow-new-card:hover {
-      background: var(--surface-2);
-      border-color: #c5c9d0;
-      color: var(--fg-2);
-    }
-    .new-ico {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      border: 1.5px solid currentColor;
+    /* ── List layout ── */
+    .group-dot.wf-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: none;
       display: grid;
       place-items: center;
-      opacity: .62;
+      color: var(--muted);
+      background: transparent;
     }
-    .new-ico svg { width: 16px; height: 16px; }
-    .new-label { font-size: 13px; font-weight: 600; }
-    .workflow-card-head {
+    .group-dot.wf-icon svg { width: 13px; height: 13px; }
+
+    /* ── Workflow row ── */
+    .wf-row {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0;
+      height: 52px;
+      padding: 0 40px 0 0;
+      border-bottom: 1px solid var(--border-2);
+      cursor: pointer;
+      transition: background .1s;
+    }
+    .wf-row:last-child { border-bottom: none; }
+    .wf-row:hover { background: var(--surface-2); }
+    .wf-row:hover .wf-row-actions { opacity: 1; }
+    .wf-row-icon-col {
+      width: 40px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .wf-row-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .wf-row-icon svg { width: 13px; height: 13px; }
+    .wf-row-main {
+      min-width: 0;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 10px;
+      padding: 0 0 0 8px;
     }
-    .workflow-card-actions {
+    .wf-row-copy { min-width: 0; flex: 1; }
+    .wf-row-name {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.01em;
+    }
+    .wf-row-desc {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .wf-row-meta {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-      position: relative;
     }
-    .workflow-card-title {
-      margin: 0 0 4px;
-      color: var(--fg);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-    .workflow-card-desc {
-      margin: 0;
-      color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.45;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .workflow-chip {
-      height: 22px;
-      display: inline-flex;
+    .wf-row-actions {
+      display: flex;
       align-items: center;
-      gap: 5px;
-      padding: 0 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
+      gap: 2px;
+      opacity: 0;
+      transition: opacity .1s;
+      flex-shrink: 0;
+      position: relative;
+      padding-left: 8px;
+    }
+
+    /* Step count pill */
+    .step-pill {
+      height: 20px;
+      padding: 0 7px;
+      border-radius: 5px;
       background: var(--surface-2);
-      color: var(--fg-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
       font-size: 11px;
       font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
-    .workflow-chip svg { width: 11px; height: 11px; color: var(--muted); }
-    .more-btn {
-      width: 26px;
-      height: 26px;
+    .step-pill svg { width: 10px; height: 10px; }
+
+    /* System badge */
+    .sys-badge {
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 4px;
+      background: var(--accent-2);
+      color: var(--accent);
+      border: 1px solid var(--accent-3);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* AI badge */
+    .ai-pill {
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 4px;
+      background: #f5f0ff;
+      color: #7c5ddc;
+      border: 1px solid #e5d9ff;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+
+    /* Row icon btn */
+    .row-icon-btn {
+      width: 28px;
+      height: 28px;
       border: 1px solid transparent;
       background: transparent;
       border-radius: var(--radius-sm);
@@ -120,27 +160,29 @@
       cursor: pointer;
       flex-shrink: 0;
     }
-    .more-btn:hover {
+    .row-icon-btn:hover {
       background: var(--hover);
-      border-color: var(--border-2);
+      border-color: var(--border);
       color: var(--fg);
     }
-    .more-btn svg { width: 14px; height: 14px; }
-    .card-menu {
+    .row-icon-btn svg { width: 14px; height: 14px; }
+
+    /* Dropdown menu */
+    .row-menu {
       position: absolute;
       z-index: 8;
-      top: 30px;
+      top: 32px;
       right: 0;
-      min-width: 132px;
-      padding: 5px;
+      min-width: 148px;
+      padding: 4px;
       border: 1px solid var(--border);
       border-radius: 9px;
       background: var(--surface);
-      box-shadow: var(--shadow-modal);
+      box-shadow: 0 4px 16px rgba(13,17,23,.1), 0 1px 3px rgba(13,17,23,.06);
       display: none;
     }
-    .card-menu.open { display: block; }
-    .card-menu-item {
+    .row-menu.open { display: block; }
+    .row-menu-item {
       width: 100%;
       height: 30px;
       border: none;
@@ -148,7 +190,7 @@
       border-radius: 6px;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       padding: 0 8px;
       color: var(--fg-2);
       font-size: 12.5px;
@@ -156,267 +198,195 @@
       text-align: left;
       cursor: pointer;
     }
-    .card-menu-item:hover {
-      background: #fff0f0;
-      color: #c0392b;
-    }
-    .workflow-steps-mini {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: auto;
-    }
-    .mini-step {
-      height: 23px;
-      max-width: 100%;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 0 8px;
-      border-radius: 999px;
-      background: var(--surface-2);
-      border: 1px solid var(--border-2);
-      color: var(--fg-2);
-      font-size: 11px;
-      white-space: nowrap;
-    }
-    .mini-step strong {
-      color: var(--muted-2);
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-    }
-    .mini-step .detail-btn {
-      width: 18px;
-      height: 18px;
-      margin-right: -4px;
-    }
-    .mini-step .detail-btn svg {
-      width: 11px;
-      height: 11px;
+    .row-menu-item:hover { background: var(--hover); }
+    .row-menu-item.danger:hover { background: #fff5f5; color: #c0392b; }
+    .row-menu-sep {
+      height: 1px;
+      background: var(--border-2);
+      margin: 3px 4px;
     }
 
+    /* ── Empty state ── */
+    .wf-empty {
+      display: grid;
+      place-items: center;
+      padding: 80px 40px;
+    }
+    .wf-empty-inner {
+      text-align: center;
+      max-width: 280px;
+    }
+    .wf-empty-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      margin: 0 auto 14px;
+    }
+    .wf-empty-icon svg { width: 20px; height: 20px; }
+    .wf-empty-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 6px;
+    }
+    .wf-empty-sub {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ══════════════════════════════════════════
+       WF MODAL — create/edit
+    ══════════════════════════════════════════ */
     .wf-modal {
       position: fixed;
       z-index: 52;
-      top: 40px;
-      bottom: 40px;
+      top: 48px;
+      bottom: 48px;
       left: 50%;
-      transform: translateX(-50%) translateY(14px) scale(.98);
-      width: min(1060px, calc(100vw - 80px));
+      transform: translateX(-50%) translateY(12px) scale(.985);
+      width: min(980px, calc(100vw - 80px));
       background: var(--surface);
-      border-radius: 16px;
+      border-radius: 14px;
       box-shadow: var(--shadow-modal);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       opacity: 0;
       pointer-events: none;
-      transition: opacity .18s ease, transform .18s ease;
+      transition: opacity .16s ease, transform .16s ease;
     }
     .wf-modal.open {
       opacity: 1;
       pointer-events: auto;
       transform: translateX(-50%) translateY(0) scale(1);
     }
-    .wf-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      padding: 20px 24px 16px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .wf-title {
-      margin: 0 0 4px;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--fg);
-    }
-    .wf-sub {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .wf-close {
-      width: 30px;
-      height: 30px;
-      border: none;
-      background: transparent;
-      border-radius: var(--radius-sm);
-      color: var(--muted);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .wf-close:hover { background: var(--hover); color: var(--fg); }
-    .wf-close svg { width: 15px; height: 15px; }
-    .wf-steps {
+
+    /* Modal header */
+    .wfm-head {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 0 24px;
+      gap: 12px;
+      padding: 0 20px 0 20px;
+      height: 52px;
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
-    .wf-step-tab {
-      height: 42px;
+    .wfm-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex: 1;
+    }
+    .wfm-step {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      border-bottom: 2px solid transparent;
+      height: 52px;
+      padding: 0 14px;
       color: var(--muted);
       font-size: 13px;
       font-weight: 500;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      white-space: nowrap;
     }
-    .wf-step-tab.active {
+    .wfm-step.active {
       color: var(--fg);
       border-bottom-color: var(--fg);
     }
-    .wf-step-num {
+    .wfm-step.done { color: var(--fg-2); }
+    .wfm-step-num {
       width: 18px;
       height: 18px;
       border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
       display: grid;
       place-items: center;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
     }
-    .wf-body { flex: 1; overflow: auto; }
-    .wf-panel { display: none; padding: 22px 24px 24px; }
-    .wf-panel.active { display: block; }
-
-    .template-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      align-items: stretch;
+    .wfm-step.active .wfm-step-num {
+      background: var(--fg);
+      border-color: var(--fg);
+      color: #fff;
     }
-    .template-option { display: flex; min-width: 0; }
-    .template-option input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
+    .wfm-step.done .wfm-step-num {
+      background: var(--status-done);
+      border-color: var(--status-done);
+      color: #fff;
     }
-    .template-card {
-      min-height: 168px;
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      background: var(--surface);
-      padding: 14px 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      cursor: pointer;
-      transition: background .12s, border-color .12s, box-shadow .12s;
+    .wfm-sep {
+      width: 20px;
+      height: 1px;
+      background: var(--border);
+      flex-shrink: 0;
     }
-    .template-option input:checked + .template-card {
-      border-color: var(--accent);
-      background: var(--accent-2);
-      box-shadow: inset 0 0 0 1px var(--accent);
-    }
-    .template-card.custom-template {
-      border-style: dashed;
-      border-width: 2px;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      background: var(--surface-2);
-    }
-    .template-option input:checked + .template-card.custom-template {
-      border-color: var(--accent);
-      background: var(--accent-2);
-      box-shadow: inset 0 0 0 1px var(--accent);
-    }
-    .custom-template .new-ico {
-      color: var(--accent);
-      opacity: .9;
-    }
-    .template-name {
+    .wfm-title-block { min-width: 0; }
+    .wfm-title {
+      font-size: 13.5px;
+      font-weight: 600;
       color: var(--fg);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
     }
-    .template-desc {
+    .wfm-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
       color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.45;
-    }
-    .template-steps {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: auto;
-    }
-
-    .builder-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 16px;
-      align-items: start;
+      place-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
     }
-    .workflow-meta {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      background: var(--surface-2);
-      padding: 16px;
-      margin-bottom: 14px;
+    .wfm-close:hover { background: var(--hover); color: var(--fg); }
+    .wfm-close svg { width: 14px; height: 14px; }
+
+    /* Modal body panels */
+    .wfm-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .wfm-panel { display: none; flex: 1; overflow: auto; }
+    .wfm-panel.active { display: flex; flex-direction: column; }
+
+    /* ── Panel 1: Name + Template ── */
+    .wfm-p1-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      flex: 1;
+      overflow: hidden;
     }
-    .workflow-meta-grid {
+    .wfm-sidebar {
+      border-right: 1px solid var(--border);
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      overflow-y: auto;
     }
-    .builder-columns {
-      display: grid;
-      grid-template-columns: minmax(310px, .86fr) minmax(460px, 1.14fr);
-      gap: 18px;
-      align-items: stretch;
-    }
-    .builder-panel {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      background: var(--surface);
-      overflow: hidden;
-    }
-    .builder-head {
-      padding: 15px 17px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .builder-title {
-      margin: 0 0 4px;
-      color: var(--fg);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-    .builder-sub {
-      margin: 0;
+    .wfm-sidebar-title {
+      font-size: 11px;
+      font-weight: 600;
       color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.45;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0 2px;
     }
-    .builder-body { padding: 16px 17px 18px; }
     .form-row {
       display: grid;
-      gap: 7px;
+      gap: 6px;
     }
     .form-label {
-      color: var(--fg-2);
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 500;
+      color: var(--fg-2);
     }
     .form-input,
     .form-textarea {
@@ -430,11 +400,11 @@
       outline: none;
       transition: border-color .12s, box-shadow .12s;
     }
-    .form-input { height: 36px; padding: 0 11px; }
+    .form-input { height: 32px; padding: 0 10px; }
     .form-textarea {
-      min-height: 70px;
+      min-height: 110px;
       resize: vertical;
-      padding: 10px 11px;
+      padding: 8px 10px;
       line-height: 1.45;
     }
     .form-input:focus,
@@ -442,399 +412,750 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-2);
     }
-    .part-list {
-      display: grid;
-      gap: 8px;
-      margin-top: 8px;
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: var(--muted-2); }
+
+    /* Template list */
+    .wfm-template-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .part-card {
+    .wfm-template-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .tmpl-list { display: grid; gap: 6px; }
+    .tmpl-option { display: flex; }
+    .tmpl-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .tmpl-row {
       width: 100%;
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: var(--surface);
-      padding: 10px 11px;
-      display: grid;
-      grid-template-columns: 28px minmax(0, 1fr) 26px;
-      align-items: center;
-      gap: 10px;
-      text-align: left;
-      cursor: grab;
-      transition: background .12s, border-color .12s, opacity .12s;
+      cursor: pointer;
+      transition: border-color .1s, background .1s;
     }
-    .part-card:active { cursor: grabbing; }
-    .part-card:hover {
+    .tmpl-option input:checked + .tmpl-row {
+      border-color: var(--accent);
+      background: var(--accent-2);
+    }
+    .tmpl-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
       background: var(--surface-2);
-      border-color: #d0d4db;
-    }
-    .part-drag {
-      width: 24px;
-      height: 24px;
-      border-radius: 7px;
+      border: 1px solid var(--border);
       display: grid;
       place-items: center;
       color: var(--muted);
-      background: var(--surface-2);
-      border: 1px solid var(--border-2);
       flex-shrink: 0;
     }
-    .part-drag svg { width: 13px; height: 13px; }
-    .part-copy { min-width: 0; flex: 1; }
-    .part-name {
-      display: block;
-      color: var(--fg);
-      font-size: 12.5px;
+    .tmpl-icon svg { width: 14px; height: 14px; }
+    .tmpl-option input:checked + .tmpl-row .tmpl-icon {
+      background: #fff;
+      border-color: var(--accent-3);
+      color: var(--accent);
+    }
+    .tmpl-copy { min-width: 0; }
+    .tmpl-name {
+      font-size: 13px;
       font-weight: 600;
+      color: var(--fg);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .part-desc {
-      display: block;
-      color: var(--muted);
+    .tmpl-desc {
       font-size: 11.5px;
-      line-height: 1.35;
+      color: var(--muted);
       margin-top: 2px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-    .canvas {
-      min-height: 350px;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-lg);
-      background: var(--surface-2);
-      padding: 12px;
-      display: grid;
-      gap: 8px;
-      align-content: start;
-      transition: border-color .12s, background .12s;
-    }
-    .canvas.drag-over {
-      border-color: var(--accent);
-      background: var(--accent-2);
-    }
-    .canvas-empty {
-      height: 190px;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.45;
-    }
-    .canvas-step {
-      display: grid;
-      grid-template-columns: 28px minmax(0, 1fr) auto auto;
+    .tmpl-row-right {
+      display: flex;
       align-items: center;
-      gap: 10px;
-      min-height: 48px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      padding: 9px 10px;
+      gap: 5px;
+      flex-shrink: 0;
     }
-    .canvas-step.dragging { opacity: .55; }
-    .step-index {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--surface-2);
-      border: 1px solid var(--border-2);
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-    .step-title {
-      min-width: 0;
-      color: var(--fg);
-      font-size: 12.5px;
-      font-weight: 600;
-      line-height: 1.35;
-    }
-    .ai-badge {
-      height: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 0 7px;
-      border-radius: 999px;
-      background: #f0eeff;
-      color: #5b4fd9;
-      border: 1px solid #ded9ff;
-      font-size: 10.5px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .remove-step,
-    .detail-btn {
-      width: 26px;
-      height: 26px;
+    .tmpl-chevron-btn {
+      width: 22px;
+      height: 22px;
       border: 1px solid transparent;
       background: transparent;
-      border-radius: var(--radius-sm);
+      border-radius: 5px;
       color: var(--muted);
       display: grid;
       place-items: center;
       cursor: pointer;
-      position: relative;
+      flex-shrink: 0;
+      transition: background .1s, color .1s;
+    }
+    .tmpl-chevron-btn:hover { background: var(--hover); color: var(--fg-2); }
+    .tmpl-chevron-btn svg { width: 12px; height: 12px; transition: transform .15s; }
+    .tmpl-chevron-btn.open svg { transform: rotate(180deg); }
+    .tmpl-wrap.acc-open .tmpl-row {
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .tmpl-accordion {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .22s ease;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0 0 var(--radius) var(--radius);
+      background: var(--surface-2);
+    }
+    .tmpl-wrap.acc-open .tmpl-option input:checked ~ .tmpl-accordion {
+      border-color: var(--accent);
+    }
+    .tmpl-accordion.open { max-height: 400px; }
+    .tmpl-acc-inner {
+      padding: 8px 10px 10px;
+      display: grid;
+      gap: 5px;
+    }
+    .tmpl-acc-step {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      padding: 7px 9px;
+      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .tmpl-acc-num {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .tmpl-acc-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 2px;
+    }
+    .tmpl-acc-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .tmpl-custom-row {
+      border-style: dashed;
+      border-width: 2px;
+      background: var(--surface-2);
+    }
+    .tmpl-option input:checked + .tmpl-custom-row {
+      border-color: var(--accent);
+      background: var(--accent-2);
+      border-style: solid;
+    }
+
+    /* ── Panel 2: Builder ── */
+    .wfm-p2-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, .9fr) minmax(420px, 1.1fr);
+      flex: 1;
+      overflow: hidden;
+    }
+    .wfm-parts-col {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .wfm-col-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
-    .remove-step:hover,
-    .detail-btn:hover {
-      background: var(--hover);
-      border-color: var(--border-2);
+    .wfm-col-title {
+      font-size: 12.5px;
+      font-weight: 600;
       color: var(--fg);
     }
-    .remove-step svg,
-    .detail-btn svg { width: 13px; height: 13px; }
-    .detail-btn::after {
+    .wfm-col-sub {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .wfm-parts-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: grid;
+      gap: 5px;
+    }
+    .part-item {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) 28px;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: grab;
+      transition: background .1s, border-color .1s;
+    }
+    .part-item:active { cursor: grabbing; }
+    .part-item:hover { background: var(--surface-2); border-color: #d0d4db; }
+    .part-drag-handle {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      color: var(--muted-2);
+      border-radius: 5px;
+    }
+    .part-drag-handle svg { width: 12px; height: 12px; }
+    .part-item-copy { min-width: 0; }
+    .part-item-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .part-item-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .part-info-btn {
+      width: 26px;
+      height: 26px;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 5px;
+      color: var(--muted-2);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .part-info-btn:hover { background: var(--hover); color: var(--fg); border-color: var(--border); }
+    .part-info-btn svg { width: 12px; height: 12px; }
+    .part-info-btn::after {
       content: attr(data-tooltip);
       position: absolute;
-      z-index: 4;
+      z-index: 10;
       right: 0;
-      top: calc(100% + 7px);
-      width: 240px;
-      padding: 8px 9px;
+      top: calc(100% + 6px);
+      width: 220px;
+      padding: 8px 10px;
       border-radius: 8px;
-      background: #1f2430;
+      background: #1c2130;
       color: #fff;
       font-size: 11.5px;
       font-weight: 400;
       line-height: 1.45;
       text-align: left;
-      box-shadow: 0 8px 24px rgba(13,17,23,.18);
+      box-shadow: 0 8px 24px rgba(13,17,23,.2);
       opacity: 0;
       pointer-events: none;
       transform: translateY(-3px);
       transition: opacity .12s, transform .12s;
       white-space: normal;
     }
-    .detail-btn:hover::after,
-    .detail-btn:focus-visible::after {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .review-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      height: 30px;
-      padding: 0 10px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
-      color: var(--fg-2);
-      font-size: 12px;
-      font-weight: 500;
-      user-select: none;
-      margin-bottom: 12px;
-    }
-    .review-toggle input { margin: 0; }
-    .wf-actions {
+    .part-info-btn:hover::after { opacity: 1; transform: translateY(0); }
+
+    /* Canvas */
+    .wfm-canvas-col {
       display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface-2);
+    }
+    .wfm-canvas-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      padding: 14px 24px 20px;
-      border-top: 1px solid var(--border);
       flex-shrink: 0;
+      background: var(--surface);
     }
-    .wf-actions-right {
+    .canvas-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
       display: flex;
-      gap: 8px;
-      justify-content: flex-end;
+      flex-direction: column;
+      gap: 6px;
     }
-    .readonly-note {
-      height: 24px;
-      display: inline-flex;
+    .canvas-drop-zone {
+      flex: 1;
+      min-height: 240px;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      display: grid;
+      gap: 6px;
+      align-content: start;
+      padding: 10px;
+      transition: border-color .12s, background .12s;
+    }
+    .canvas-drop-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-2);
+    }
+    .canvas-empty-state {
+      grid-column: 1 / -1;
+      height: 140px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+    .canvas-step-item {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
       align-items: center;
-      padding: 0 9px;
-      border-radius: 999px;
+      gap: 8px;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 8px 10px;
+      transition: opacity .12s;
+    }
+    .canvas-step-item.dragging { opacity: .45; }
+    .canvas-step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
       background: var(--surface-2);
       border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 11.5px;
+      font-size: 10.5px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    .canvas-step-name {
+      font-size: 12.5px;
       font-weight: 500;
+      color: var(--fg);
+      line-height: 1.35;
     }
-    .detail-summary {
-      padding: 18px 24px 0;
+    .canvas-step-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
     }
-    .detail-desc {
-      margin: 0;
-      color: var(--fg-2);
-      font-size: 13px;
-      line-height: 1.65;
-    }
-    .detail-list {
+    .canvas-remove-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 5px;
+      color: var(--muted-2);
       display: grid;
-      gap: 9px;
-      padding: 18px 24px 24px;
+      place-items: center;
+      cursor: pointer;
     }
-    .detail-step {
+    .canvas-remove-btn:hover { background: #fff5f5; border-color: #fdd; color: #c0392b; }
+    .canvas-remove-btn svg { width: 12px; height: 12px; }
+
+    /* AI badge in canvas */
+    .ai-step-badge {
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 4px;
+      background: #f5f0ff;
+      color: #7c5ddc;
+      border: 1px solid #e5d9ff;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+
+    /* Modal footer */
+    .wfm-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--surface);
+    }
+    .wfm-footer-right { display: flex; align-items: center; gap: 6px; }
+
+    /* ══════════════════════════════════════════
+       WF DETAIL MODAL
+    ══════════════════════════════════════════ */
+    .wf-detail-modal {
+      position: fixed;
+      z-index: 52;
+      top: 48px;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px) scale(.985);
+      width: min(680px, calc(100vw - 80px));
+      background: var(--surface);
+      border-radius: 14px;
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease, transform .16s ease;
+    }
+    .wf-detail-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+    .wfd-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .wfd-head-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+    .wfd-modal-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .wfd-modal-icon svg { width: 17px; height: 17px; }
+    .wfd-modal-copy { min-width: 0; }
+    .wfd-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+      margin: 0 0 4px;
+    }
+    .wfd-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .wfd-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .wfd-close:hover { background: var(--hover); color: var(--fg); }
+    .wfd-close svg { width: 14px; height: 14px; }
+
+    .wfd-desc-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .wfd-desc {
+      font-size: 13px;
+      color: var(--fg-2);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .wfd-steps-section {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+    .wfd-steps-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .wfd-steps-list { display: grid; gap: 6px; }
+    .wfd-step {
       display: grid;
       grid-template-columns: 28px minmax(0, 1fr) auto;
       align-items: center;
       gap: 10px;
+      padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: var(--surface);
-      padding: 11px 12px;
     }
-    .detail-step-copy { min-width: 0; }
-    .detail-step-title {
-      color: var(--fg);
+    .wfd-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    .wfd-step-copy { min-width: 0; }
+    .wfd-step-name {
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 3px;
+      color: var(--fg);
+      margin-bottom: 2px;
     }
-    .detail-step-desc {
-      color: var(--muted);
+    .wfd-step-desc {
       font-size: 12px;
-      line-height: 1.45;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .wfd-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
     }
   </style>
 </head>
 <body>
 
 <main class="main">
+
+  <!-- Page header -->
   <div class="page-head">
     <div>
       <div class="page-title-row">
         <h1 class="page-title">Workflows</h1>
-        <span class="page-count" id="workflowCount">0 workflow</span>
+        <span class="page-count" id="wfCountBadge">0 workflow</span>
       </div>
       <div class="page-sub">Proje oluştururken seçilecek workflow akışlarını yönet.</div>
     </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" type="button" id="newWorkflowBtn">
+        <span class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+        Yeni workflow
+      </button>
+    </div>
   </div>
 
-  <div class="workflow-page">
-    <div class="workflow-grid" id="workflowGrid"></div>
+  <!-- Filter row -->
+  <div class="filter-row">
+    <input class="search" type="search" placeholder="Workflow ara…" id="wfSearch" />
+    <span class="spacer"></span>
   </div>
+
+  <!-- List -->
+  <div class="list-wrap" id="wfListWrap"></div>
+
 </main>
 
+<!-- Scrim -->
 <div class="scrim" id="scrim"></div>
 
-<div class="wf-modal" id="workflowModal" role="dialog" aria-modal="true" aria-labelledby="workflowModalTitle">
-  <div class="wf-head">
-    <div>
-      <h2 class="wf-title" id="workflowModalTitle">Yeni workflow oluştur</h2>
-      <p class="wf-sub" id="workflowModalSub">Template seç ya da boş canvas ile kendi akışını oluştur.</p>
+<!-- ══════════ CREATE / EDIT MODAL ══════════ -->
+<div class="wf-modal" id="wfModal" role="dialog" aria-modal="true">
+
+  <div class="wfm-head">
+    <div class="wfm-stepper">
+      <div class="wfm-step active" id="stepTab1">
+        <span class="wfm-step-num">1</span>
+        Template seç
+      </div>
+      <div class="wfm-sep"></div>
+      <div class="wfm-step" id="stepTab2">
+        <span class="wfm-step-num">2</span>
+        Oluştur
+      </div>
     </div>
-    <button class="wf-close" type="button" id="modalClose" aria-label="Kapat">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    <button class="wfm-close" type="button" id="wfModalClose" aria-label="Kapat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
   </div>
 
-  <div class="wf-steps">
-    <div class="wf-step-tab active" id="stepOneTab"><span class="wf-step-num">1</span> Template</div>
-    <div class="wf-step-tab" id="stepTwoTab"><span class="wf-step-num">2</span> Oluştur</div>
-  </div>
+  <div class="wfm-body">
 
-  <div class="wf-body">
-    <section class="wf-panel active" id="templatePanel">
-      <div class="workflow-meta">
-        <div class="workflow-meta-grid">
+    <!-- Panel 1 -->
+    <section class="wfm-panel active" id="wfPanel1">
+      <div class="wfm-p1-layout">
+
+        <div class="wfm-sidebar">
+          <p class="wfm-sidebar-title">Detaylar</p>
           <label class="form-row">
             <span class="form-label">Workflow adı</span>
-            <input class="form-input" id="workflowName" type="text" />
+            <input class="form-input" id="wfName" type="text" placeholder="Ör: Sprint Hazırlık Akışı" />
           </label>
           <label class="form-row">
-            <span class="form-label">Workflow açıklaması</span>
-            <textarea class="form-textarea" id="workflowDesc"></textarea>
+            <span class="form-label">Açıklama</span>
+            <textarea class="form-textarea" id="wfDesc" placeholder="Bu workflow ne için kullanılır?"></textarea>
           </label>
         </div>
+
+        <div class="wfm-template-area">
+          <p class="wfm-template-label">Bir template seç</p>
+          <div class="tmpl-list" id="tmplList"></div>
+        </div>
+
       </div>
-      <div class="template-grid" id="templateGrid"></div>
     </section>
 
-    <section class="wf-panel" id="builderPanel">
-      <div class="builder-grid">
-        <div class="builder-columns">
-          <div class="builder-panel">
-            <div class="builder-head">
-              <div>
-                <h3 class="builder-title">Bulunan akışlar</h3>
-                <p class="builder-sub">Parçaları canvas alanına sürükle.</p>
-              </div>
-            </div>
-            <div class="builder-body">
-              <div class="part-list" id="partList"></div>
-            </div>
-          </div>
+    <!-- Panel 2 -->
+    <section class="wfm-panel" id="wfPanel2">
+      <div class="wfm-p2-layout">
 
-          <div class="builder-panel">
-            <div class="builder-head">
-              <div>
-                <h3 class="builder-title">Oluştur</h3>
-                <p class="builder-sub">Sıralamayı drag/drop ile değiştir, istemediğin adımı kaldır.</p>
-              </div>
-              <span class="workflow-chip" id="canvasCount">0 adım</span>
+        <div class="wfm-parts-col">
+          <div class="wfm-col-head">
+            <p class="wfm-col-title">Kullanılabilir adımlar</p>
+            <p class="wfm-col-sub">Canvas alanına sürükle veya tıkla.</p>
+          </div>
+          <div class="wfm-parts-list" id="wfPartList"></div>
+        </div>
+
+        <div class="wfm-canvas-col">
+          <div class="wfm-canvas-head">
+            <div>
+              <p class="wfm-col-title">Workflow akışı</p>
+              <p class="wfm-col-sub">Sırala, düzenle, istemediklerini çıkar.</p>
             </div>
-            <div class="builder-body">
-              <label class="review-toggle">
-                <input type="checkbox" id="firstStepAi" />
-                1. adıma AI review ekle
-              </label>
-              <div class="canvas" id="canvas"></div>
-            </div>
+            <span class="step-pill" id="canvasCount">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              0 adım
+            </span>
+          </div>
+          <div class="canvas-wrap">
+            <div class="canvas-drop-zone" id="wfCanvas"></div>
           </div>
         </div>
+
       </div>
     </section>
+
   </div>
 
-  <div class="wf-actions">
-    <button class="btn" type="button" id="backBtn">Geri</button>
-    <div class="wf-actions-right">
-      <button class="btn" type="button" id="cancelBtn">Vazgeç</button>
-      <button class="btn btn-primary" type="button" id="nextBtn">Devam et</button>
-      <button class="btn btn-primary" type="button" id="saveBtn" style="display:none;">
+  <div class="wfm-footer">
+    <button class="btn" type="button" id="wfBackBtn" style="visibility:hidden;">Geri</button>
+    <div class="wfm-footer-right">
+      <button class="btn" type="button" id="wfCancelBtn">Vazgeç</button>
+      <button class="btn btn-primary" type="button" id="wfNextBtn">Devam et</button>
+      <button class="btn btn-primary" type="button" id="wfSaveBtn" style="display:none;">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
-        Workflow oluştur
+        Oluştur
       </button>
     </div>
   </div>
+
 </div>
 
-<div class="wf-modal" id="workflowDetailModal" role="dialog" aria-modal="true" aria-labelledby="workflowDetailTitle">
-  <div class="wf-head">
-    <div>
-      <h2 class="wf-title" id="workflowDetailTitle"></h2>
-      <p class="wf-sub" id="workflowDetailSub"></p>
+<!-- ══════════ DETAIL MODAL ══════════ -->
+<div class="wf-detail-modal" id="wfDetailModal" role="dialog" aria-modal="true">
+  <div class="wfd-head">
+    <div class="wfd-head-left">
+      <div class="wfd-modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>
+      </div>
+      <div class="wfd-modal-copy">
+        <h2 class="wfd-title" id="wfdTitle"></h2>
+        <div class="wfd-meta-row" id="wfdMeta"></div>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="readonly-note">Readonly</span>
-      <button class="wf-close" type="button" id="detailClose" aria-label="Kapat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
+    <button class="wfd-close" type="button" id="wfDetailClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
   </div>
-  <div class="wf-body">
-    <div class="detail-summary">
-      <p class="detail-desc" id="workflowDetailDesc"></p>
-    </div>
-    <div class="detail-list" id="workflowDetailSteps"></div>
+  <div class="wfd-desc-section">
+    <p class="wfd-desc" id="wfdDesc"></p>
+  </div>
+  <div class="wfd-steps-section">
+    <p class="wfd-steps-title">Adımlar</p>
+    <div class="wfd-steps-list" id="wfdSteps"></div>
+  </div>
+  <div class="wfd-footer">
+    <button class="btn" type="button" id="wfDetailClose2">Kapat</button>
   </div>
 </div>
 
 <script>
 const SVG = {
-  workflow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>`,
+  workflow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>`,
   plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
   drag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/></svg>`,
   minus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg>`,
   info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>`,
-  more: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>`,
+  more: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>`,
+  lock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
 };
 
 const PARTS = [
-  { id: 'scope', name: 'RFP/Kapsam', desc: 'RFP, hedef, teslim kapsamı ve başarı kriterleri netleştirilir.', aiDefault: false },
-  { id: 'analysis', name: 'Analiz', desc: 'İş ihtiyacı, teknik bağımlılıklar, veri akışları ve riskli noktalar çıkarılır.', aiDefault: true },
-  { id: 'wbs', name: 'WBS / İş adam günü', desc: 'İş kırılım yapısı hazırlanır ve her kırılıma tahmini efor atanır.', aiDefault: true },
-  { id: 'sprints', name: 'Sprintlerin ve tarihlerin oluşturulması', desc: 'Sprint sayısı, tarih aralıkları ve teslim hedefleri planlanır.', aiDefault: true },
-  { id: 'tasks', name: 'İş Tasklerinin oluşturulması sprint sprint', desc: 'Her sprint için yapılacak taskler, kapsam ve kabul kriterleriyle oluşturulur.', aiDefault: true },
-  { id: 'risks', name: 'Risk ve bağımlılık kontrolü', desc: 'Blokerlar, dış ekip bağımlılıkları ve çözülmesi gereken varsayımlar takip edilir.', aiDefault: true },
-  { id: 'qa', name: 'UAT / QA planı', desc: 'Test kapsamı, kabul kriterleri ve UAT sorumlulukları planlanır.', aiDefault: true },
-  { id: 'release', name: 'Release & handoff', desc: 'Yayın hazırlığı, teslim notları ve operasyon devri tamamlanır.', aiDefault: true },
+  { id: 'scope',    name: 'RFP / Kapsam',               desc: 'RFP, hedef, teslim kapsamı ve başarı kriterleri netleştirilir.' },
+  { id: 'analysis', name: 'Analiz',                     desc: 'İş ihtiyacı, teknik bağımlılıklar, veri akışları ve riskli noktalar çıkarılır.' },
+  { id: 'wbs',      name: 'WBS / İş adam günü',         desc: 'İş kırılım yapısı hazırlanır ve her kırılıma tahmini efor atanır.' },
+  { id: 'sprints',  name: 'Sprint planlaması',           desc: 'Sprint sayısı, tarih aralıkları ve teslim hedefleri planlanır.' },
+  { id: 'tasks',    name: 'Task oluşturma',              desc: 'Her sprint için yapılacak taskler, kapsam ve kabul kriterleriyle oluşturulur.' },
+  { id: 'risks',    name: 'Risk & bağımlılık kontrolü', desc: 'Blokerlar, dış ekip bağımlılıkları ve çözülmesi gereken varsayımlar takip edilir.' },
+  { id: 'qa',       name: 'UAT / QA planı',             desc: 'Test kapsamı, kabul kriterleri ve UAT sorumlulukları planlanır.' },
+  { id: 'release',  name: 'Release & handoff',          desc: 'Yayın hazırlığı, teslim notları ve operasyon devri tamamlanır.' },
 ];
 
 const DEFAULT_WORKFLOWS = [
@@ -872,10 +1193,11 @@ let selectedTemplate = 'discoverySprint';
 let modalStep = 1;
 let builderSteps = [];
 let draggingPartId = null;
-let draggingStepIndex = null;
+let draggingStepIdx = null;
+let searchQuery = '';
 
-function escapeHtml(value) {
-  return String(value)
+function esc(v) {
+  return String(v)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -883,378 +1205,426 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function getPart(id) {
-  return PARTS.find(part => part.id === id) || PARTS[0];
-}
+function getPart(id) { return PARTS.find(p => p.id === id) || PARTS[0]; }
 
 function getStoredWorkflows() {
-  try {
-    return JSON.parse(localStorage.getItem('goventisWorkflows') || '[]');
-  } catch {
-    return [];
-  }
+  try { return JSON.parse(localStorage.getItem('goventisWorkflows') || '[]'); } catch { return []; }
 }
-
-function saveStoredWorkflows(workflows) {
-  localStorage.setItem('goventisWorkflows', JSON.stringify(workflows));
+function saveStoredWorkflows(wfs) {
+  localStorage.setItem('goventisWorkflows', JSON.stringify(wfs));
 }
-
 function allWorkflows() {
   return [
-    ...DEFAULT_WORKFLOWS.map(workflow => ({ ...workflow, system: true })),
-    ...getStoredWorkflows().map(workflow => ({ ...workflow, system: false })),
+    ...DEFAULT_WORKFLOWS.map(w => ({ ...w, system: true })),
+    ...getStoredWorkflows().map(w => ({ ...w, system: false })),
   ];
 }
 
-function detailButton(desc) {
-  return `<button class="detail-btn" type="button" data-tooltip="${escapeHtml(desc)}" aria-label="Detay">${SVG.info}</button>`;
-}
+/* ── Render list ── */
+function renderList() {
+  const wrap = document.getElementById('wfListWrap');
+  const q = searchQuery.toLowerCase();
+  let wfs = allWorkflows();
+  if (q) wfs = wfs.filter(w => w.name.toLowerCase().includes(q) || w.desc.toLowerCase().includes(q));
 
-function aiBadge() {
-  return '<span class="ai-badge">AI review</span>';
-}
+  const total = wfs.length;
+  document.getElementById('wfCountBadge').textContent = `${total} workflow`;
 
-function workflowCard(workflow) {
-  const steps = workflow.steps.map(getPart);
-  return `
-    <article class="workflow-card" data-workflow-id="${escapeHtml(workflow.id)}" tabindex="0" role="button">
-      <div class="workflow-card-head">
-        <div>
-          <h3 class="workflow-card-title">${escapeHtml(workflow.name)}</h3>
-          <p class="workflow-card-desc">${escapeHtml(workflow.desc)}</p>
+  if (!total) {
+    wrap.innerHTML = `
+      <div class="wf-empty">
+        <div class="wf-empty-inner">
+          <div class="wf-empty-icon">${SVG.workflow}</div>
+          <p class="wf-empty-title">${searchQuery ? 'Sonuç bulunamadı' : 'Henüz workflow yok'}</p>
+          <p class="wf-empty-sub">${searchQuery ? 'Farklı bir arama terimi deneyin.' : 'İlk workflow\'u oluşturmak için "Yeni workflow" butonuna tıkla.'}</p>
         </div>
-        <div class="workflow-card-actions">
-          ${workflow.system ? '' : `
-            <button class="more-btn" type="button" data-menu-for="${escapeHtml(workflow.id)}" aria-label="Workflow menüsü">${SVG.more}</button>
-            <div class="card-menu" data-menu-id="${escapeHtml(workflow.id)}">
-              <button class="card-menu-item" type="button" data-delete-workflow="${escapeHtml(workflow.id)}">Sil</button>
+      </div>`;
+    return;
+  }
+
+  const system = wfs.filter(w => w.system);
+  const custom = wfs.filter(w => !w.system);
+
+  let html = '';
+  if (system.length) {
+    html += `
+      <section class="group">
+        <header class="group-head">
+          <span class="group-dot wf-icon">${SVG.lock}</span>
+          <span class="group-name">Sistem</span>
+          <span class="group-count">${system.length}</span>
+        </header>
+        ${system.map(rowHtml).join('')}
+      </section>`;
+  }
+  if (custom.length) {
+    html += `
+      <section class="group">
+        <header class="group-head">
+          <span class="group-dot wf-icon">${SVG.workflow}</span>
+          <span class="group-name">Özel</span>
+          <span class="group-count">${custom.length}</span>
+        </header>
+        ${custom.map(rowHtml).join('')}
+      </section>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function rowHtml(w) {
+  const stepCount = w.steps.length;
+  const hasAi = stepCount > 0;
+  return `
+    <div class="wf-row" data-wf-id="${esc(w.id)}" tabindex="0" role="button">
+      <div class="wf-row-icon-col">
+        <span class="wf-row-icon">${SVG.workflow}</span>
+      </div>
+      <div class="wf-row-main">
+        <div class="wf-row-copy">
+          <div class="wf-row-name">${esc(w.name)}</div>
+          <div class="wf-row-desc">${esc(w.desc)}</div>
+        </div>
+      </div>
+      <div class="wf-row-meta">
+        ${w.system ? `<span class="sys-badge">Sistem</span>` : ''}
+        ${hasAi ? `<span class="ai-pill">AI</span>` : ''}
+        <span class="step-pill">${stepCount} adım</span>
+        <div class="wf-row-actions" id="actions-${esc(w.id)}">
+          ${w.system ? '' : `
+            <button class="row-icon-btn" type="button" data-menu-for="${esc(w.id)}" aria-label="Menü">${SVG.more}</button>
+            <div class="row-menu" data-menu-id="${esc(w.id)}">
+              <button class="row-menu-item danger" type="button" data-delete="${esc(w.id)}">Sil</button>
             </div>
           `}
         </div>
       </div>
-      <div class="workflow-steps-mini">
-        ${steps.map((step, index) => `<span class="mini-step"><strong>${index + 1}</strong>${escapeHtml(step.name)}</span>`).join('')}
-      </div>
-    </article>
-  `;
+    </div>`;
 }
 
-function renderWorkflowGrid() {
-  const workflows = allWorkflows();
-  document.getElementById('workflowGrid').innerHTML = `
-    ${workflows.map(workflowCard).join('')}
-    <button class="workflow-new-card" type="button" id="newWorkflowCard">
-      <span class="new-ico">${SVG.plus}</span>
-      <span class="new-label">Yeni workflow oluştur</span>
-    </button>
+/* ── Detail modal ── */
+function openDetail(wfId) {
+  const w = allWorkflows().find(x => x.id === wfId);
+  if (!w) return;
+  const steps = w.steps.map(getPart);
+  document.getElementById('wfdTitle').textContent = w.name;
+  document.getElementById('wfdDesc').textContent = w.desc;
+  document.getElementById('wfdMeta').innerHTML = `
+    <span class="step-pill">${steps.length} adım</span>
+    ${w.system ? `<span class="sys-badge">Sistem</span>` : ''}
   `;
-  document.getElementById('workflowCount').textContent = `${workflows.length} workflow`;
-  document.getElementById('newWorkflowCard').addEventListener('click', openModal);
-}
-
-function renderWorkflowDetail(workflow) {
-  const steps = workflow.steps.map(getPart);
-  document.getElementById('workflowDetailTitle').textContent = workflow.name;
-  document.getElementById('workflowDetailSub').textContent = `${steps.length} adım`;
-  document.getElementById('workflowDetailDesc').textContent = workflow.desc;
-  document.getElementById('workflowDetailSteps').innerHTML = steps.map((step, index) => {
-    const showAi = index === 0 ? Boolean(workflow.firstStepAi) : true;
+  document.getElementById('wfdSteps').innerHTML = steps.map((s, i) => {
     return `
-      <div class="detail-step">
-        <span class="step-index">${index + 1}</span>
-        <span class="detail-step-copy">
-          <span class="detail-step-title">${escapeHtml(step.name)}</span>
-          <span class="detail-step-desc">${escapeHtml(step.desc)}</span>
-        </span>
-        ${showAi ? aiBadge() : '<span></span>'}
-      </div>
-    `;
+      <div class="wfd-step">
+        <span class="wfd-step-num">${i + 1}</span>
+        <div class="wfd-step-copy">
+          <div class="wfd-step-name">${esc(s.name)}</div>
+          <div class="wfd-step-desc">${esc(s.desc)}</div>
+        </div>
+        <span class="ai-step-badge">AI review</span>
+      </div>`;
   }).join('');
+  openScrim();
+  document.getElementById('wfDetailModal').classList.add('open');
+  postModal(true);
 }
 
-function openDetailModal(workflowId) {
-  const workflow = allWorkflows().find(item => item.id === workflowId);
-  if (!workflow) return;
-  renderWorkflowDetail(workflow);
-  document.getElementById('scrim').classList.add('open');
-  document.getElementById('workflowDetailModal').classList.add('open');
-  if (window.parent !== window) {
-    window.parent.postMessage({ type: 'modalState', open: true }, '*');
-  }
-}
-
-function templateOption(template) {
-  const steps = template.steps.map(getPart);
-  return `
-    <label class="template-option">
-      <input type="radio" name="template" value="${template.id}" ${selectedTemplate === template.id ? 'checked' : ''} />
-      <span class="template-card">
-        <span class="template-name">${escapeHtml(template.name)}</span>
-        <span class="template-desc">${escapeHtml(template.desc)}</span>
-        <span class="template-steps">
-          ${steps.map((step, index) => `<span class="mini-step"><strong>${index + 1}</strong>${escapeHtml(step.name)}</span>`).join('')}
-        </span>
-      </span>
-    </label>
-  `;
-}
-
-function renderTemplates() {
-  document.getElementById('templateGrid').innerHTML = `
-    ${DEFAULT_WORKFLOWS.map(templateOption).join('')}
-    <label class="template-option">
-      <input type="radio" name="template" value="custom" ${selectedTemplate === 'custom' ? 'checked' : ''} />
-      <span class="template-card custom-template">
-        <span class="new-ico">${SVG.plus}</span>
-        <span class="template-name">Ben kendim oluşturmak istiyorum</span>
-        <span class="template-desc">Boş canvas ile başlayıp parçaları drag/drop ile kendin sırala.</span>
-      </span>
-    </label>
-  `;
-}
-
-function renderParts() {
-  document.getElementById('partList').innerHTML = PARTS.map(part => `
-    <div class="part-card" role="button" tabindex="0" draggable="true" data-part-id="${part.id}">
-      <span class="part-drag">${SVG.drag}</span>
-      <span class="part-copy">
-        <span class="part-name">${escapeHtml(part.name)}</span>
-        <span class="part-desc">${escapeHtml(part.desc)}</span>
-      </span>
-      ${detailButton(part.desc)}
-    </div>
-  `).join('');
-}
-
-function renderCanvas() {
-  const canvas = document.getElementById('canvas');
-  document.getElementById('canvasCount').textContent = `${builderSteps.length} adım`;
-  if (!builderSteps.length) {
-    canvas.innerHTML = '<div class="canvas-empty">Sol taraftaki parçaları buraya sürükleyerek workflow akışını oluştur.</div>';
-    return;
-  }
-
-  const firstStepAi = document.getElementById('firstStepAi').checked;
-  canvas.innerHTML = builderSteps.map((partId, index) => {
-    const part = getPart(partId);
-    const showAi = index === 0 ? firstStepAi : true;
-    return `
-      <div class="canvas-step" draggable="true" data-step-index="${index}">
-        <span class="step-index">${index + 1}</span>
-        <span class="step-title">${escapeHtml(part.name)}</span>
-        ${showAi ? aiBadge() : '<span></span>'}
-        <span style="display:flex;gap:4px;">
-          ${detailButton(part.desc)}
-          <button class="remove-step" type="button" data-remove-index="${index}" aria-label="Adımı çıkar">${SVG.minus}</button>
-        </span>
-      </div>
-    `;
-  }).join('');
+/* ── Create modal ── */
+function openCreateModal() {
+  selectedTemplate = 'discoverySprint';
+  builderSteps = [];
+  renderTemplates();
+  renderParts();
+  applyTemplate();
+  setModalStep(1);
+  openScrim();
+  document.getElementById('wfModal').classList.add('open');
+  postModal(true);
 }
 
 function setModalStep(step) {
   modalStep = step;
-  document.getElementById('templatePanel').classList.toggle('active', step === 1);
-  document.getElementById('builderPanel').classList.toggle('active', step === 2);
-  document.getElementById('stepOneTab').classList.toggle('active', step === 1);
-  document.getElementById('stepTwoTab').classList.toggle('active', step === 2);
-  document.getElementById('backBtn').style.visibility = step === 2 ? 'visible' : 'hidden';
-  document.getElementById('nextBtn').style.display = step === 1 ? '' : 'none';
-  document.getElementById('saveBtn').style.display = step === 2 ? '' : 'none';
-  document.getElementById('workflowModalSub').textContent = step === 1
-    ? 'Template seç ya da boş canvas ile kendi akışını oluştur.'
-    : 'Parçaları canvas alanına sürükle, sırala ve istemediklerini çıkar.';
+  document.getElementById('wfPanel1').classList.toggle('active', step === 1);
+  document.getElementById('wfPanel2').classList.toggle('active', step === 2);
+  document.getElementById('stepTab1').classList.toggle('active', step === 1);
+  document.getElementById('stepTab1').classList.toggle('done', step === 2);
+  document.getElementById('stepTab2').classList.toggle('active', step === 2);
+  document.getElementById('wfBackBtn').style.visibility = step === 2 ? 'visible' : 'hidden';
+  document.getElementById('wfNextBtn').style.display = step === 1 ? '' : 'none';
+  document.getElementById('wfSaveBtn').style.display = step === 2 ? '' : 'none';
 }
 
-function applySelectedTemplate() {
+function applyTemplate() {
   if (selectedTemplate === 'custom') {
     builderSteps = [];
-    document.getElementById('workflowName').value = '';
-    document.getElementById('workflowDesc').value = '';
-    document.getElementById('firstStepAi').checked = false;
-    renderCanvas();
-    return;
+    document.getElementById('wfName').value = '';
+    document.getElementById('wfDesc').value = '';
+  } else {
+    const t = DEFAULT_WORKFLOWS.find(x => x.id === selectedTemplate) || DEFAULT_WORKFLOWS[0];
+    builderSteps = [...t.steps];
+    document.getElementById('wfName').value = t.name;
+    document.getElementById('wfDesc').value = t.desc;
   }
-  const template = DEFAULT_WORKFLOWS.find(item => item.id === selectedTemplate) || DEFAULT_WORKFLOWS[0];
-  builderSteps = [...template.steps];
-  document.getElementById('workflowName').value = template.name;
-  document.getElementById('workflowDesc').value = template.desc;
-  document.getElementById('firstStepAi').checked = Boolean(template.firstStepAi);
   renderCanvas();
 }
 
-function openModal() {
-  selectedTemplate = 'discoverySprint';
-  renderTemplates();
-  renderParts();
-  applySelectedTemplate();
-  setModalStep(1);
-  document.getElementById('scrim').classList.add('open');
-  document.getElementById('workflowModal').classList.add('open');
-  if (window.parent !== window) {
-    window.parent.postMessage({ type: 'modalState', open: true }, '*');
+function renderTemplates() {
+  const list = document.getElementById('tmplList');
+  list.innerHTML = DEFAULT_WORKFLOWS.map(t => {
+    const steps = t.steps.map(getPart);
+    return `
+      <div class="tmpl-wrap" data-tmpl-id="${t.id}">
+        <label class="tmpl-option">
+          <input type="radio" name="tmpl" value="${t.id}" ${selectedTemplate === t.id ? 'checked' : ''} />
+          <span class="tmpl-row">
+            <span class="tmpl-icon">${SVG.workflow}</span>
+            <span class="tmpl-copy">
+              <span class="tmpl-name">${esc(t.name)}</span>
+              <span class="tmpl-desc">${esc(t.desc)}</span>
+            </span>
+            <span class="tmpl-row-right">
+              <span class="step-pill">${steps.length} adım</span>
+              <button class="tmpl-chevron-btn" type="button" data-expand="${t.id}" aria-label="Adımları göster">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </span>
+          </span>
+        </label>
+        <div class="tmpl-accordion" id="acc-${t.id}">
+          <div class="tmpl-acc-inner">
+            ${steps.map((s, i) => `
+              <div class="tmpl-acc-step">
+                <span class="tmpl-acc-num">${i + 1}</span>
+                <span>
+                  <div class="tmpl-acc-name">${esc(s.name)}</div>
+                  <div class="tmpl-acc-desc">${esc(s.desc)}</div>
+                </span>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }).join('') + `
+    <label class="tmpl-option">
+      <input type="radio" name="tmpl" value="custom" ${selectedTemplate === 'custom' ? 'checked' : ''} />
+      <span class="tmpl-row tmpl-custom-row">
+        <span class="tmpl-icon">${SVG.plus}</span>
+        <span class="tmpl-copy">
+          <span class="tmpl-name">Boş canvas</span>
+          <span class="tmpl-desc">Sıfırdan oluştur, istediğin adımları sürükle.</span>
+        </span>
+      </span>
+    </label>`;
+}
+
+function renderParts() {
+  document.getElementById('wfPartList').innerHTML = PARTS.map(p => `
+    <div class="part-item" draggable="true" data-part-id="${p.id}">
+      <span class="part-drag-handle">${SVG.drag}</span>
+      <span class="part-item-copy">
+        <span class="part-item-name">${esc(p.name)}</span>
+        <span class="part-item-desc">${esc(p.desc)}</span>
+      </span>
+      <button class="part-info-btn" type="button" data-tooltip="${esc(p.desc)}" aria-label="Detay">${SVG.info}</button>
+    </div>`).join('');
+}
+
+function renderCanvas() {
+  const canvas = document.getElementById('wfCanvas');
+  document.getElementById('canvasCount').innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    ${builderSteps.length} adım`;
+
+  if (!builderSteps.length) {
+    canvas.innerHTML = `<div class="canvas-empty-state">Sol taraftaki adımları buraya sürükle<br>veya tıklayarak ekle.</div>`;
+    return;
   }
+
+  canvas.innerHTML = builderSteps.map((partId, i) => {
+    const p = getPart(partId);
+    return `
+      <div class="canvas-step-item" draggable="true" data-step-index="${i}">
+        <span class="canvas-step-num">${i + 1}</span>
+        <span class="canvas-step-name">${esc(p.name)}</span>
+        <div class="canvas-step-actions">
+          <span class="ai-step-badge">AI</span>
+          <button class="canvas-remove-btn" type="button" data-remove="${i}" aria-label="Çıkar">${SVG.minus}</button>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function closeModal() {
-  document.getElementById('workflowModal').classList.remove('open');
-  document.getElementById('workflowDetailModal').classList.remove('open');
-  document.getElementById('scrim').classList.remove('open');
-  if (window.parent !== window) {
-    window.parent.postMessage({ type: 'modalState', open: false }, '*');
-  }
+  document.getElementById('wfModal').classList.remove('open');
+  document.getElementById('wfDetailModal').classList.remove('open');
+  closeScrim();
+  postModal(false);
 }
 
-function addPart(partId, index = builderSteps.length) {
-  builderSteps.splice(index, 0, partId);
-  renderCanvas();
+function openScrim() { document.getElementById('scrim').classList.add('open'); }
+function closeScrim() { document.getElementById('scrim').classList.remove('open'); }
+function postModal(open) {
+  if (window.parent !== window) window.parent.postMessage({ type: 'modalState', open }, '*');
 }
 
-function moveStep(from, to) {
-  if (from === to || from < 0 || to < 0 || from >= builderSteps.length || to >= builderSteps.length) return;
-  const [item] = builderSteps.splice(from, 1);
-  builderSteps.splice(to, 0, item);
-  renderCanvas();
+function closeRowMenus() {
+  document.querySelectorAll('.row-menu.open').forEach(m => m.classList.remove('open'));
 }
 
 function saveWorkflow() {
   if (!builderSteps.length) return;
-  const workflows = getStoredWorkflows();
-  workflows.push({
-    id: 'workflow-' + Date.now().toString(36),
-    name: document.getElementById('workflowName').value.trim() || 'Untitled workflow',
-    desc: document.getElementById('workflowDesc').value.trim() || 'Workflow açıklaması eklenmedi.',
+  const wfs = getStoredWorkflows();
+  wfs.push({
+    id: 'wf-' + Date.now().toString(36),
+    name: document.getElementById('wfName').value.trim() || 'Untitled workflow',
+    desc: document.getElementById('wfDesc').value.trim() || '',
     steps: [...builderSteps],
-    firstStepAi: document.getElementById('firstStepAi').checked,
   });
-  saveStoredWorkflows(workflows);
-  renderWorkflowGrid();
+  saveStoredWorkflows(wfs);
+  renderList();
   closeModal();
 }
 
-function closeCardMenus() {
-  document.querySelectorAll('.card-menu.open').forEach(menu => menu.classList.remove('open'));
-}
-
-function deleteStoredWorkflow(workflowId) {
-  const workflows = getStoredWorkflows().filter(workflow => workflow.id !== workflowId);
-  saveStoredWorkflows(workflows);
-  renderWorkflowGrid();
-}
-
-document.getElementById('modalClose').addEventListener('click', closeModal);
-document.getElementById('detailClose').addEventListener('click', closeModal);
-document.getElementById('cancelBtn').addEventListener('click', closeModal);
+/* ── Event wiring ── */
+document.getElementById('newWorkflowBtn').addEventListener('click', openCreateModal);
+document.getElementById('wfModalClose').addEventListener('click', closeModal);
+document.getElementById('wfCancelBtn').addEventListener('click', closeModal);
+document.getElementById('wfDetailClose').addEventListener('click', closeModal);
+document.getElementById('wfDetailClose2').addEventListener('click', closeModal);
 document.getElementById('scrim').addEventListener('click', closeModal);
-document.getElementById('backBtn').addEventListener('click', () => setModalStep(1));
-document.getElementById('nextBtn').addEventListener('click', () => {
-  applySelectedTemplate();
-  setModalStep(2);
-});
-document.getElementById('saveBtn').addEventListener('click', saveWorkflow);
-document.getElementById('firstStepAi').addEventListener('change', renderCanvas);
+document.getElementById('wfBackBtn').addEventListener('click', () => setModalStep(1));
+document.getElementById('wfNextBtn').addEventListener('click', () => { applyTemplate(); setModalStep(2); });
+document.getElementById('wfSaveBtn').addEventListener('click', saveWorkflow);
 
-document.getElementById('workflowGrid').addEventListener('click', e => {
+document.getElementById('wfSearch').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderList();
+});
+
+/* Template selection + accordion */
+document.getElementById('tmplList').addEventListener('change', e => {
+  if (e.target.name === 'tmpl') selectedTemplate = e.target.value;
+});
+
+document.getElementById('tmplList').addEventListener('click', e => {
+  const chevron = e.target.closest('[data-expand]');
+  if (!chevron) return;
+  e.preventDefault();
+  const id = chevron.dataset.expand;
+  const acc = document.getElementById(`acc-${id}`);
+  const wrap = chevron.closest('.tmpl-wrap');
+  const isOpen = acc.classList.contains('open');
+  document.querySelectorAll('.tmpl-accordion.open').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.tmpl-chevron-btn.open').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.tmpl-wrap.acc-open').forEach(w => w.classList.remove('acc-open'));
+  if (!isOpen) {
+    acc.classList.add('open');
+    chevron.classList.add('open');
+    wrap.classList.add('acc-open');
+  }
+});
+
+/* Row clicks */
+document.getElementById('wfListWrap').addEventListener('click', e => {
   const menuBtn = e.target.closest('[data-menu-for]');
   if (menuBtn) {
     e.stopPropagation();
     const menu = document.querySelector(`[data-menu-id="${menuBtn.dataset.menuFor}"]`);
     const wasOpen = menu?.classList.contains('open');
-    closeCardMenus();
+    closeRowMenus();
     if (menu && !wasOpen) menu.classList.add('open');
     return;
   }
-
-  const deleteBtn = e.target.closest('[data-delete-workflow]');
-  if (deleteBtn) {
+  const delBtn = e.target.closest('[data-delete]');
+  if (delBtn) {
     e.stopPropagation();
-    deleteStoredWorkflow(deleteBtn.dataset.deleteWorkflow);
+    const wfs = getStoredWorkflows().filter(w => w.id !== delBtn.dataset.delete);
+    saveStoredWorkflows(wfs);
+    renderList();
     return;
   }
+  if (e.target.closest('.wf-row-actions')) return;
+  const row = e.target.closest('.wf-row');
+  if (!row) return;
+  openDetail(row.dataset.wfId);
+});
 
-  if (e.target.closest('#newWorkflowCard')) return;
-  if (e.target.closest('.detail-btn')) return;
-  const card = e.target.closest('.workflow-card');
-  if (!card) return;
-  openDetailModal(card.dataset.workflowId);
+document.getElementById('wfListWrap').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const row = e.target.closest('.wf-row');
+  if (!row) return;
+  e.preventDefault();
+  openDetail(row.dataset.wfId);
 });
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.workflow-card-actions')) closeCardMenus();
+  if (!e.target.closest('.wf-row-actions')) closeRowMenus();
 });
 
-document.getElementById('workflowGrid').addEventListener('keydown', e => {
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  const card = e.target.closest('.workflow-card');
-  if (!card) return;
-  e.preventDefault();
-  openDetailModal(card.dataset.workflowId);
-});
-
-document.getElementById('templateGrid').addEventListener('change', e => {
-  if (e.target.name === 'template') selectedTemplate = e.target.value;
-});
-
-document.getElementById('partList').addEventListener('dragstart', e => {
-  const card = e.target.closest('.part-card');
-  if (!card) return;
-  draggingPartId = card.dataset.partId;
-  draggingStepIndex = null;
+/* Part list drag */
+document.getElementById('wfPartList').addEventListener('dragstart', e => {
+  const item = e.target.closest('.part-item');
+  if (!item) return;
+  draggingPartId = item.dataset.partId;
+  draggingStepIdx = null;
   e.dataTransfer.effectAllowed = 'copy';
 });
 
-document.getElementById('canvas').addEventListener('dragstart', e => {
-  const step = e.target.closest('.canvas-step');
+/* Part list click to add */
+document.getElementById('wfPartList').addEventListener('click', e => {
+  if (e.target.closest('.part-info-btn')) return;
+  const item = e.target.closest('.part-item');
+  if (!item) return;
+  builderSteps.push(item.dataset.partId);
+  renderCanvas();
+});
+
+/* Canvas drag */
+document.getElementById('wfCanvas').addEventListener('dragstart', e => {
+  const step = e.target.closest('.canvas-step-item');
   if (!step) return;
-  draggingStepIndex = Number(step.dataset.stepIndex);
+  draggingStepIdx = Number(step.dataset.stepIndex);
   draggingPartId = null;
   step.classList.add('dragging');
   e.dataTransfer.effectAllowed = 'move';
 });
-
-document.getElementById('canvas').addEventListener('dragend', e => {
-  e.target.closest('.canvas-step')?.classList.remove('dragging');
+document.getElementById('wfCanvas').addEventListener('dragend', e => {
+  e.target.closest('.canvas-step-item')?.classList.remove('dragging');
   draggingPartId = null;
-  draggingStepIndex = null;
-  document.getElementById('canvas').classList.remove('drag-over');
+  draggingStepIdx = null;
+  document.getElementById('wfCanvas').classList.remove('drag-over');
 });
-
-document.getElementById('canvas').addEventListener('dragover', e => {
+document.getElementById('wfCanvas').addEventListener('dragover', e => {
   e.preventDefault();
-  document.getElementById('canvas').classList.add('drag-over');
+  document.getElementById('wfCanvas').classList.add('drag-over');
 });
-
-document.getElementById('canvas').addEventListener('dragleave', e => {
+document.getElementById('wfCanvas').addEventListener('dragleave', e => {
   if (!e.currentTarget.contains(e.relatedTarget)) e.currentTarget.classList.remove('drag-over');
 });
-
-document.getElementById('canvas').addEventListener('drop', e => {
+document.getElementById('wfCanvas').addEventListener('drop', e => {
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
-  const targetStep = e.target.closest('.canvas-step');
-  const targetIndex = targetStep ? Number(targetStep.dataset.stepIndex) : builderSteps.length;
-  if (draggingPartId) addPart(draggingPartId, targetIndex);
-  if (draggingStepIndex !== null) moveStep(draggingStepIndex, Math.min(targetIndex, builderSteps.length - 1));
+  const target = e.target.closest('.canvas-step-item');
+  const targetIdx = target ? Number(target.dataset.stepIndex) : builderSteps.length;
+  if (draggingPartId) {
+    builderSteps.splice(targetIdx, 0, draggingPartId);
+  } else if (draggingStepIdx !== null) {
+    const [item] = builderSteps.splice(draggingStepIdx, 1);
+    builderSteps.splice(Math.min(targetIdx, builderSteps.length), 0, item);
+  }
   draggingPartId = null;
-  draggingStepIndex = null;
+  draggingStepIdx = null;
+  renderCanvas();
 });
-
-document.getElementById('canvas').addEventListener('click', e => {
-  const remove = e.target.closest('[data-remove-index]');
-  if (!remove) return;
-  builderSteps.splice(Number(remove.dataset.removeIndex), 1);
+document.getElementById('wfCanvas').addEventListener('click', e => {
+  const btn = e.target.closest('[data-remove]');
+  if (!btn) return;
+  builderSteps.splice(Number(btn.dataset.remove), 1);
   renderCanvas();
 });
 
-window.addEventListener('message', e => {
-  if (e.data?.type === 'closeModal') closeModal();
-});
+window.addEventListener('message', e => { if (e.data?.type === 'closeModal') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-});
-
-renderWorkflowGrid();
+renderList();
 </script>
 
 </body>
