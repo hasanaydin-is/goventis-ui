@@ -641,6 +641,197 @@
       gap: 8px;
       padding-top: 18px;
     }
+    .create-actions.split { justify-content: space-between; }
+
+    /* ── Two-step stepper ── */
+    .cpm-stepper {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+    .cpm-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .cpm-step.active { color: var(--fg); }
+    .cpm-step.done   { color: var(--fg-2); }
+    .cpm-step-num {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+      font-size: 10px; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    .cpm-step.active .cpm-step-num { background: var(--fg); border-color: var(--fg); color: #fff; }
+    .cpm-step.done   .cpm-step-num { background: var(--status-done); border-color: var(--status-done); color: #fff; }
+    .cpm-sep { width: 24px; height: 1px; background: var(--border); flex-shrink: 0; margin: 0 8px; }
+
+    /* ── Reviewer step (panel 2) ── */
+    .cpm-wf-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 14px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border-2);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .cpm-wf-info svg { color: var(--muted-2); flex-shrink: 0; }
+    .cpm-wf-info strong { color: var(--fg-2); font-weight: 600; }
+    .cpm-wf-stepcount {
+      height: 18px; padding: 0 7px;
+      border-radius: 4px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 11px; font-weight: 500;
+      color: var(--muted);
+      display: inline-flex; align-items: center;
+    }
+    .cpm-reviewer-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0 14px;
+      line-height: 1.45;
+    }
+    .rs-item {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+    }
+    .rs-num-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 3px;
+    }
+    .rs-num {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+      font-size: 10.5px; font-weight: 700;
+      color: var(--muted);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .rs-connector {
+      flex: 1;
+      width: 1px;
+      min-height: 10px;
+      background: var(--border-2);
+      margin: 4px 0 0;
+    }
+    .rs-body {
+      padding: 0 0 12px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+    }
+    .rs-step-name { font-size: 13px; font-weight: 500; color: var(--fg); flex: 1; min-width: 0; }
+    .rs-role-label {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--muted-2);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .rs-picker-wrap { position: relative; flex-shrink: 0; }
+    .rs-picker-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--fg-2);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      min-width: 152px;
+      transition: border-color .12s, background .12s;
+      font: inherit;
+    }
+    .rs-picker-btn:hover { border-color: #c0c4cc; background: var(--surface-2); }
+    .rs-av-none {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--border-2);
+      display: grid; place-items: center;
+      color: var(--muted-2);
+      flex-shrink: 0;
+    }
+    .rs-picker-name { flex: 1; text-align: left; white-space: nowrap; }
+    .rs-chevron { color: var(--muted-2); flex-shrink: 0; margin-left: auto; }
+    .rs-assigned-av {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 8.5px; font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    #rsDropPortal {
+      position: fixed;
+      z-index: 700;
+      min-width: 210px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(13,17,23,.1), 0 1px 4px rgba(13,17,23,.06);
+      padding: 4px;
+      display: none;
+    }
+    .rs-drop-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      min-height: 36px;
+      padding: 5px 8px;
+      border: none;
+      background: transparent;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: left;
+      transition: background .1s;
+      font: inherit;
+    }
+    .rs-drop-item:hover { background: var(--hover); }
+    .rs-drop-item.selected { background: var(--accent-2); }
+    .rs-drop-av {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 9px; font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .rs-drop-av-none {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px dashed var(--border);
+      display: grid; place-items: center;
+      font-size: 12px;
+      color: var(--muted-2);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .rs-drop-info { display: grid; }
+    .rs-drop-name { font-size: 12.5px; font-weight: 500; color: var(--fg); line-height: 1.3; }
+    .rs-drop-role { font-size: 11px; color: var(--muted); }
   </style>
 </head>
 <body>
@@ -890,6 +1081,9 @@
 <!-- Overlay scrim -->
 <div class="scrim" id="scrim" onclick="closeModal()"></div>
 
+<!-- Reviewer picker portal — outside all transformed/overflow:hidden elements -->
+<div id="rsDropPortal"></div>
+
 <!-- Project detail modal -->
 <div class="proj-modal" id="projModal" role="dialog" aria-modal="true">
 
@@ -927,42 +1121,74 @@
 
 <!-- Create project modal -->
 <div class="create-modal" id="createProjectModal" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle">
+
+  <!-- Header with stepper -->
   <div class="create-head">
-    <div>
-      <h2 class="create-title" id="createProjectTitle">Yeni proje oluştur</h2>
-      <p class="create-sub">Proje bilgilerini gir ve daha önce tanımlanmış workflow akışlarından birini seç.</p>
+    <div class="cpm-stepper">
+      <div class="cpm-step active" id="cpmStep1" aria-label="Adım 1: Workflow seç">
+        <span class="cpm-step-num">1</span>
+        <span id="createProjectTitle">Workflow seç</span>
+      </div>
+      <span class="cpm-sep"></span>
+      <div class="cpm-step" id="cpmStep2">
+        <span class="cpm-step-num">2</span>
+        Reviewer ata
+      </div>
     </div>
     <button class="create-close" type="button" onclick="closeModal()" aria-label="Kapat">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
   </div>
 
-  <form class="create-body" id="createProjectForm">
+  <!-- Panel 1: Proje bilgileri + Workflow seçimi -->
+  <div class="create-body" id="cpmPanel1">
     <div class="form-grid">
       <label class="form-field">
         <span class="form-label">Proje adı</span>
-        <input class="form-input" id="newProjectName" name="projectName" type="text" placeholder="Örn. Migros Web" required />
+        <input class="form-input" id="newProjectName" type="text" placeholder="Örn. Migros Web" />
       </label>
-
       <label class="form-field">
         <span class="form-label">Açıklama</span>
-        <textarea class="form-textarea" id="newProjectDesc" name="projectDesc" placeholder="Projenin kapsamını kısa şekilde yaz." required></textarea>
+        <textarea class="form-textarea" id="newProjectDesc" placeholder="Projenin kapsamını kısa şekilde yaz."></textarea>
       </label>
-
       <div class="form-field">
         <span class="form-label">Workflow</span>
         <div class="workflow-options" id="workflowOptions"></div>
       </div>
     </div>
-
     <div class="create-actions">
       <button class="btn" type="button" onclick="closeModal()">Vazgeç</button>
-      <button class="btn btn-primary" type="submit">
-        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
-        Proje oluştur
+      <button class="btn btn-primary" type="button" id="cpmNextBtn">
+        Devam et
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="margin-left:2px"><path d="M9 18l6-6-6-6"/></svg>
       </button>
     </div>
-  </form>
+  </div>
+
+  <!-- Panel 2: Reviewer ataması -->
+  <div class="create-body" id="cpmPanel2" style="display:none">
+    <div class="cpm-wf-info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>
+      <strong id="cpmWfName"></strong>
+      <span class="cpm-wf-stepcount" id="cpmWfStepcount"></span>
+    </div>
+    <p class="cpm-reviewer-hint">Her adım için review yapacak kişiyi ata. Opsiyonel — boş bırakabilirsin.</p>
+    <div id="cpmReviewerList"></div>
+    <div class="create-actions split">
+      <button class="btn" type="button" id="cpmBackBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="margin-right:2px"><path d="M15 18l-6-6 6-6"/></svg>
+        Geri
+      </button>
+      <div style="display:flex;gap:8px">
+        <button class="btn" type="button" onclick="closeModal()">Vazgeç</button>
+        <button class="btn btn-primary" type="button" id="cpmSubmitBtn">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          Proje oluştur
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -1234,6 +1460,7 @@ function openProject(id) {
 }
 
 function closeModal() {
+  closeReviewerPicker();
   document.getElementById('projModal').classList.remove('open');
   document.getElementById('createProjectModal').classList.remove('open');
   document.getElementById('scrim').classList.remove('open');
@@ -1266,9 +1493,23 @@ window.addEventListener('message', e => {
   if (e.data?.type === 'closeModal') closeModal();
 });
 
+/* ── Team members for reviewer assignment ── */
+const TEAM_MEMBERS = [
+  { initials:'AY', name:'Hasan Aydın',  role:'Proje Lideri', color:'#4a7fd4' },
+  { initials:'MK', name:'Melih Kaya',   role:'Frontend Dev', color:'#9b59b6' },
+  { initials:'BT', name:'Berk Tunç',    role:'Backend Dev',  color:'#e67e22' },
+  { initials:'ZD', name:'Zeynep Demir', role:'Frontend Dev', color:'#27ae60' },
+  { initials:'CK', name:'Can Kılıç',    role:'QA',           color:'#3498db' },
+];
+
+let reviewerAssignments = {};
+
 function openNewProject() {
-  document.getElementById('createProjectForm').reset();
-  document.querySelector('[name="workflowId"]').checked = true;
+  document.getElementById('newProjectName').value = '';
+  document.getElementById('newProjectDesc').value = '';
+  reviewerAssignments = {};
+  renderWorkflowOptions();
+  setCreateStep(1);
   document.getElementById('scrim').classList.add('open');
   document.getElementById('createProjectModal').classList.add('open');
   if (window.parent !== window) {
@@ -1277,13 +1518,156 @@ function openNewProject() {
   setTimeout(() => document.getElementById('newProjectName').focus(), 0);
 }
 
-document.getElementById('createProjectForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const form = new FormData(e.currentTarget);
-  const name = String(form.get('projectName') || '').trim();
-  const desc = String(form.get('projectDesc') || '').trim();
-  const workflowId = String(form.get('workflowId') || 'discoverySprint');
-  if (!name || !desc) return;
+function setCreateStep(step) {
+  document.getElementById('cpmPanel1').style.display = step === 1 ? '' : 'none';
+  document.getElementById('cpmPanel2').style.display = step === 2 ? '' : 'none';
+  document.getElementById('cpmStep1').classList.toggle('active', step === 1);
+  document.getElementById('cpmStep1').classList.toggle('done',   step === 2);
+  document.getElementById('cpmStep2').classList.toggle('active', step === 2);
+}
+
+function goToReviewerStep() {
+  const name = document.getElementById('newProjectName').value.trim();
+  if (!name) {
+    document.getElementById('newProjectName').focus();
+    document.getElementById('newProjectName').style.borderColor = 'var(--status-error, #e53e3e)';
+    setTimeout(() => { document.getElementById('newProjectName').style.borderColor = ''; }, 1400);
+    return;
+  }
+  const workflowId = document.querySelector('[name="workflowId"]:checked')?.value || 'discoverySprint';
+  const wf = getWorkflowOptions()[workflowId] || Object.values(getWorkflowOptions())[0];
+
+  document.getElementById('cpmWfName').textContent = wf.name;
+  document.getElementById('cpmWfStepcount').textContent = wf.steps.length + ' adım';
+  reviewerAssignments = {};
+  renderReviewerList(wf);
+  setCreateStep(2);
+}
+
+const SVG_USER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+const SVG_CHEVRON = `<svg class="rs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M6 9l6 6 6-6"/></svg>`;
+
+function renderReviewerList(wf) {
+  document.getElementById('cpmReviewerList').innerHTML = wf.steps.map((stepName, i) => {
+    const isLast = i === wf.steps.length - 1;
+    return `
+      <div class="rs-item">
+        <div class="rs-num-col">
+          <span class="rs-num">${i + 1}</span>
+          ${!isLast ? '<span class="rs-connector"></span>' : ''}
+        </div>
+        <div class="rs-body">
+          <span class="rs-step-name">${escapeHtml(stepName)}</span>
+          <span class="rs-role-label">Reviewer</span>
+          <div class="rs-picker-wrap" data-step-idx="${i}">
+            <button class="rs-picker-btn" type="button" data-picker="${i}">
+              <span class="rs-av-none">${SVG_USER}</span>
+              <span class="rs-picker-name">Atanmadı</span>
+              ${SVG_CHEVRON}
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ── Portal-based picker — lives outside all transformed elements ── */
+let activePickerStep = null;
+
+function openReviewerPicker(btn, stepIdx) {
+  if (activePickerStep === stepIdx) { closeReviewerPicker(); return; }
+  closeReviewerPicker();
+
+  const current = reviewerAssignments[stepIdx];
+  const portal  = document.getElementById('rsDropPortal');
+
+  portal.innerHTML = [
+    `<button class="rs-drop-item${!current ? ' selected' : ''}" type="button" data-pick-step="${stepIdx}" data-pick-idx="-1">
+       <span class="rs-drop-av-none">—</span>
+       <span class="rs-drop-info"><span class="rs-drop-name">Atanmadı</span></span>
+     </button>`,
+    ...TEAM_MEMBERS.map((m, mi) => `
+      <button class="rs-drop-item${current?.initials === m.initials ? ' selected' : ''}" type="button" data-pick-step="${stepIdx}" data-pick-idx="${mi}">
+        <span class="rs-drop-av" style="background:${m.color}">${escapeHtml(m.initials)}</span>
+        <span class="rs-drop-info">
+          <span class="rs-drop-name">${escapeHtml(m.name)}</span>
+          <span class="rs-drop-role">${escapeHtml(m.role)}</span>
+        </span>
+      </button>`),
+  ].join('');
+
+  const rect = btn.getBoundingClientRect();
+  portal.style.top   = (rect.bottom + 4) + 'px';
+  portal.style.right = (window.innerWidth - rect.right) + 'px';
+  portal.style.left  = 'auto';
+  portal.style.display = 'block';
+  activePickerStep = stepIdx;
+}
+
+function closeReviewerPicker() {
+  const portal = document.getElementById('rsDropPortal');
+  if (!portal) return;
+  portal.style.display = 'none';
+  portal.innerHTML = '';
+  activePickerStep = null;
+}
+
+document.getElementById('cpmReviewerList').addEventListener('click', e => {
+  const pickerBtn = e.target.closest('[data-picker]');
+  if (pickerBtn) {
+    e.stopPropagation();
+    openReviewerPicker(pickerBtn, Number(pickerBtn.dataset.picker));
+  }
+});
+
+document.addEventListener('click', e => {
+  if (activePickerStep !== null &&
+      !e.target.closest('[data-picker]') &&
+      !e.target.closest('#rsDropPortal')) {
+    closeReviewerPicker();
+  }
+});
+
+document.getElementById('rsDropPortal').addEventListener('click', e => {
+  const item = e.target.closest('[data-pick-idx]');
+  if (!item) return;
+  const stepIdx  = Number(item.dataset.pickStep);
+  const memberIdx = Number(item.dataset.pickIdx);
+  const member   = memberIdx >= 0 ? TEAM_MEMBERS[memberIdx] : null;
+  reviewerAssignments[stepIdx] = member;
+  updatePickerBtn(stepIdx, member);
+  closeReviewerPicker();
+});
+
+function updatePickerBtn(stepIdx, member) {
+  const wrap = document.querySelector(`[data-step-idx="${stepIdx}"]`);
+  if (!wrap) return;
+  const btn = wrap.querySelector('.rs-picker-btn');
+  if (member) {
+    btn.innerHTML = `
+      <span class="rs-assigned-av" style="background:${member.color}">${escapeHtml(member.initials)}</span>
+      <span class="rs-picker-name">${escapeHtml(member.name)}</span>
+      ${SVG_CHEVRON}`;
+  } else {
+    btn.innerHTML = `
+      <span class="rs-av-none">${SVG_USER}</span>
+      <span class="rs-picker-name">Atanmadı</span>
+      ${SVG_CHEVRON}`;
+  }
+}
+
+function submitCreateProject() {
+  const name = document.getElementById('newProjectName').value.trim();
+  const desc = document.getElementById('newProjectDesc').value.trim();
+  const workflowId = document.querySelector('[name="workflowId"]:checked')?.value || 'discoverySprint';
+  if (!name) return;
+
+  const assignedMembers = Object.values(reviewerAssignments).filter(Boolean);
+  const uniqueMembers = assignedMembers.filter((m, i, arr) => arr.findIndex(x => x.initials === m.initials) === i);
+  const defaultMember = { initials:'AY', name:'Hasan Aydın', role:'Proje Lideri', color:'#4a7fd4' };
+  const members = uniqueMembers.length
+    ? uniqueMembers
+    : [defaultMember];
 
   const project = {
     id: 'custom-' + Date.now().toString(36),
@@ -1299,11 +1683,10 @@ document.getElementById('createProjectForm').addEventListener('submit', e => {
     issuesDone: 0,
     createdBy: 'Hasan Aydın',
     createdAt: 'Bugün',
-    desc,
+    desc: desc || '',
     workflowId,
-    members: [
-      { initials:'AY', name:'Hasan Aydın', role:'Proje Lideri', color:'#4a7fd4' },
-    ],
+    reviewerAssignments: { ...reviewerAssignments },
+    members,
     sampleIssues: [],
   };
 
@@ -1312,7 +1695,11 @@ document.getElementById('createProjectForm').addEventListener('submit', e => {
   saveStoredProjects(projects);
   renderStoredProjects();
   closeModal();
-});
+}
+
+document.getElementById('cpmNextBtn').addEventListener('click', goToReviewerStep);
+document.getElementById('cpmBackBtn').addEventListener('click', () => setCreateStep(1));
+document.getElementById('cpmSubmitBtn').addEventListener('click', submitCreateProject);
 
 renderWorkflowOptions();
 renderStoredProjects();
