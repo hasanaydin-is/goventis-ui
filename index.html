@@ -38,6 +38,18 @@
 
 <div data-partial="modal"></div>
 <div data-partial="ai-prompt"></div>
+<div data-partial="proj-modal"></div>
+
+<!-- Global scrim — covers sidebar & AI prompt when an iframe modal is open -->
+<div id="globalScrim" style="
+  position: fixed; inset: 0;
+  background: rgba(13,17,23,.38);
+  backdrop-filter: blur(2px);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+"></div>
 
 <script type="module" src="scripts/main.js"></script>
 

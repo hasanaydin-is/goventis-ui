@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Goventis — Project</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/layout.css" />
+  <link rel="stylesheet" href="../styles/components.css" />
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--surface); }
+    .main { height: 100%; overflow-y: auto; }
+
+    /* ── Color strip ── */
+    .proj-strip { height: 5px; width: 100%; flex-shrink: 0; }
+
+    /* ── Breadcrumb ── */
+    .proj-crumb {
+      padding: 11px 40px 0;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .proj-crumb a {
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .12s;
+    }
+    .proj-crumb a:hover { color: var(--fg); }
+    .proj-crumb svg { width: 11px; height: 11px; }
+    .proj-crumb-sep { color: var(--border); }
+    .proj-crumb-cur { color: var(--fg-2); font-weight: 500; }
+
+    /* ── Compact project summary ── */
+    .proj-summary {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 14px 40px 16px;
+      gap: 20px;
+    }
+    .proj-summary-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      flex: 1;
+      min-width: 0;
+    }
+    .proj-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .proj-summary-body { flex: 1; min-width: 0; }
+    .proj-summary-row1 {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 3px;
+    }
+    .proj-summary-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      margin: 0;
+      line-height: 1.2;
+    }
+    .proj-summary-type {
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 400;
+      flex-shrink: 0;
+    }
+    .proj-summary-desc {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin: 0 0 10px;
+      line-height: 1.55;
+      max-width: 560px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .proj-summary-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .proj-meta {
+      font-size: 11.5px;
+      color: var(--muted-2);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .proj-meta svg { width: 11px; height: 11px; }
+    .proj-meta-sep { color: var(--border); }
+
+    /* Stat chips */
+    .proj-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 21px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--fg-2);
+      white-space: nowrap;
+    }
+    .proj-chip svg { width: 10px; height: 10px; color: var(--muted); }
+
+    /* Mini progress */
+    .proj-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .proj-progress-bar {
+      width: 64px;
+      height: 5px;
+      border-radius: 3px;
+      background: var(--border-2);
+      overflow: hidden;
+    }
+    .proj-progress-bar > span {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+    }
+    .proj-progress-pct {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Avatars */
+    .proj-avatars { display: flex; align-items: center; }
+    .proj-av {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      display: grid; place-items: center;
+      font-size: 8px; font-weight: 700;
+      color: #fff;
+      margin-left: -6px;
+    }
+    .proj-av:first-child { margin-left: 0; }
+    .proj-av-label { font-size: 11px; color: var(--muted); margin-left: 6px; }
+
+    /* Actions */
+    .proj-summary-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Divider ── */
+    .proj-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 40px;
+    }
+
+    /* ── Task list section head ── */
+    .task-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 40px 10px;
+    }
+    .task-head-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .task-total {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--muted-2);
+      background: var(--surface-2);
+      border: 1px solid var(--border-2);
+      border-radius: 999px;
+      padding: 0 7px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .task-head-filter { display: flex; gap: 6px; }
+
+    /* ── Flat task rows ── */
+    .task-list { padding: 0 40px 48px; }
+
+    .task-row {
+      display: grid;
+      grid-template-columns: 76px 26px 1fr 106px 34px 74px 38px 28px;
+      align-items: center;
+      gap: 0 8px;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .1s, border-color .1s;
+      margin-bottom: 1px;
+    }
+    .task-row:hover {
+      background: var(--hover);
+      border-color: var(--border-2);
+    }
+    .task-row + .task-row { }
+
+    /* Columns */
+    .tr-id {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted-2);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .tr-prio { display: grid; place-items: center; }
+    .tr-prio svg, .tr-prio > div { width: 14px; height: 14px; }
+    .tr-title {
+      font-size: 13px;
+      color: var(--fg);
+      font-weight: 450;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tr-status {}
+    .tr-assignee { display: grid; place-items: center; }
+    .tr-sprint {
+      font-size: 11.5px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .tr-points {
+      font-size: 11.5px;
+      color: var(--muted);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .tr-more {
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transition: opacity .12s;
+    }
+    .task-row:hover .tr-more { opacity: 1; }
+    .tr-more svg { width: 13px; height: 13px; color: var(--muted); }
+
+    /* Mini avatar */
+    .mini-av {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 8px; font-weight: 700;
+      color: #fff;
+    }
+
+    /* Status badge */
+    .sbadge {
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      padding: 0 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+    .sbadge.todo     { background: #f0f1f4; color: #6a7280; }
+    .sbadge.prog     { background: #fff8ed; color: #b36b00; }
+    .sbadge.review   { background: #f0eeff; color: #5b4fd9; }
+    .sbadge.done     { background: #edf9f3; color: #1a7a4a; }
+    .sbadge.blocked  { background: #fff0f0; color: #c0392b; }
+
+    /* Column header row */
+    .task-col-head {
+      display: grid;
+      grid-template-columns: 76px 26px 1fr 106px 34px 74px 38px 28px;
+      gap: 0 8px;
+      padding: 0 12px;
+      margin-bottom: 4px;
+    }
+    .task-col-head span {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--muted-2);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .task-col-head .th-right { text-align: right; }
+  </style>
+</head>
+<body>
+
+<main class="main" id="mainWrap"><!-- populated by JS --></main>
+
+<script>
+const PROJECTS = {
+  kd: {
+    initials: 'KD', name: 'Kahve Dünyası', type: 'KD · Web',
+    stripColor: '#c47a3a',
+    logoBg: 'linear-gradient(135deg, #c47a3a 0%, #e8973d 100%)',
+    sprint: 32, sprintPct: 68,
+    issues: 24, issuesDone: 16,
+    createdBy: 'Hasan Aydın', createdAt: '12 Oca 2024',
+    desc: 'Kahve Dünyası web platformu için UI yenileme ve müşteri deneyimi akışları geliştirmesi.',
+    members: [
+      { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın' },
+      { initials:'MK', color:'#9b59b6', name:'Melih Kaya'  },
+      { initials:'BT', color:'#e67e22', name:'Berk Tunç'   },
+    ],
+    tasks: [
+      { id:'KD-142', title:'Checkout flow yeniden tasarımı',     status:'prog',    priority:'high',   av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.', reporter:'Melih K.',  sprint:32, points:5,  ai:74, label:'frontend' },
+      { id:'KD-143', title:'Mobil menü optimizasyonu',           status:'todo',    priority:'medium', av:'MK', avColor:'#9b59b6', assignee:'Melih K.', reporter:'Berk T.',   sprint:32, points:3,  ai:61, label:'frontend' },
+      { id:'KD-144', title:'Ürün filtreleme UI güncellemesi',    status:'todo',    priority:'low',    av:'BT', avColor:'#e67e22', assignee:'Berk T.',  reporter:'Hasan A.',  sprint:32, points:2,  ai:79, label:'ui'       },
+      { id:'KD-145', title:'Sepet senkronizasyon hatası',        status:'blocked', priority:'urgent', av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.', reporter:'Melih K.',  sprint:32, points:8,  ai:55, label:'bug'      },
+      { id:'KD-139', title:'Kullanıcı dashboard yenileme',       status:'review',  priority:'medium', av:'MK', avColor:'#9b59b6', assignee:'Melih K.', reporter:'Hasan A.',  sprint:31, points:5,  ai:88, label:'frontend' },
+      { id:'KD-138', title:'Ödeme sayfası A/B testi',            status:'done',    priority:'high',   av:'BT', avColor:'#e67e22', assignee:'Berk T.',  reporter:'Hasan A.',  sprint:31, points:5,  ai:92, label:'ab-test'  },
+      { id:'KD-135', title:'Kullanıcı onboarding akışı',         status:'done',    priority:'medium', av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.', reporter:'Berk T.',   sprint:31, points:3,  ai:96, label:'feature'  },
+    ],
+  },
+  a1: {
+    initials: 'A1', name: 'A101', type: 'A101 · Mobile App',
+    stripColor: '#cc3333',
+    logoBg: 'linear-gradient(135deg, #cc3333 0%, #e84c4c 100%)',
+    sprint: 14, sprintPct: 44,
+    issues: 18, issuesDone: 8,
+    createdBy: 'Zeynep Demir', createdAt: '3 Mar 2024',
+    desc: 'A101 mobil uygulaması için yeni özellik geliştirme ve performans iyileştirmeleri.',
+    members: [
+      { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın'  },
+      { initials:'BT', color:'#e67e22', name:'Berk Tunç'    },
+      { initials:'ZD', color:'#27ae60', name:'Zeynep Demir' },
+      { initials:'CK', color:'#3498db', name:'Can Kılıç'    },
+    ],
+    tasks: [
+      { id:'A1-88',  title:'Push notification sistemi',          status:'prog',   priority:'high',   av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Zeynep D.', sprint:14, points:5, ai:69, label:'backend'  },
+      { id:'A1-90',  title:'Uygulama açılış süresi optimizasyonu', status:'prog', priority:'medium', av:'CK', avColor:'#3498db', assignee:'Can K.',    reporter:'Berk T.',   sprint:14, points:5, ai:81, label:'perf'     },
+      { id:'A1-89',  title:'Dark mode desteği',                  status:'todo',   priority:'medium', av:'ZD', avColor:'#27ae60', assignee:'Zeynep D.', reporter:'Hasan A.',  sprint:14, points:3, ai:73, label:'feature'  },
+      { id:'A1-91',  title:'Profil fotoğrafı yükleme hatası',    status:'blocked',priority:'urgent', av:'BT', avColor:'#e67e22', assignee:'Berk T.',   reporter:'Can K.',    sprint:14, points:3, ai:48, label:'bug'      },
+      { id:'A1-87',  title:'Bildirim tercihleri ekranı',         status:'review', priority:'low',    av:'ZD', avColor:'#27ae60', assignee:'Zeynep D.', reporter:'Hasan A.',  sprint:13, points:2, ai:85, label:'feature'  },
+      { id:'A1-85',  title:'Login ekranı yenileme',              status:'done',   priority:'high',   av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Can K.',    sprint:13, points:5, ai:94, label:'frontend' },
+      { id:'A1-83',  title:'Biometric auth entegrasyonu',        status:'done',   priority:'high',   av:'BT', avColor:'#e67e22', assignee:'Berk T.',   reporter:'Zeynep D.', sprint:13, points:8, ai:97, label:'auth'     },
+    ],
+  },
+  vf: {
+    initials: 'VF', name: 'Vodafone', type: 'VF · CRM Portal',
+    stripColor: '#d94f3d',
+    logoBg: 'linear-gradient(135deg, #d94f3d 0%, #e86a5c 100%)',
+    sprint: 7, sprintPct: 82,
+    issues: 9, issuesDone: 7,
+    createdBy: 'Melih Kaya', createdAt: '18 Oca 2024',
+    desc: 'Vodafone CRM portal modernizasyonu ve Jira/Salesforce entegrasyon geliştirmeleri.',
+    members: [
+      { initials:'MK', color:'#9b59b6', name:'Melih Kaya'  },
+      { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın' },
+    ],
+    tasks: [
+      { id:'VF-45', title:'Rapor export özelliği',               status:'prog',   priority:'medium', av:'MK', avColor:'#9b59b6', assignee:'Melih K.',  reporter:'Hasan A.', sprint:7, points:3, ai:71, label:'feature' },
+      { id:'VF-46', title:'Dashboard widget yenileme',           status:'todo',   priority:'low',    av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Melih K.', sprint:7, points:2, ai:68, label:'ui'      },
+      { id:'VF-44', title:'Müşteri arama filtresi',              status:'done',   priority:'high',   av:'MK', avColor:'#9b59b6', assignee:'Melih K.',  reporter:'Hasan A.', sprint:7, points:3, ai:91, label:'feature' },
+      { id:'VF-43', title:'Salesforce webhook entegrasyonu',     status:'done',   priority:'high',   av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Melih K.', sprint:6, points:8, ai:95, label:'backend' },
+      { id:'VF-42', title:'Bulk import müşteri verisi',          status:'done',   priority:'medium', av:'MK', avColor:'#9b59b6', assignee:'Melih K.',  reporter:'Hasan A.', sprint:6, points:5, ai:89, label:'feature' },
+    ],
+  },
+  sx: {
+    initials: 'SX', name: 'SunExpress', type: 'SX · Booking Flow',
+    stripColor: '#d4922a',
+    logoBg: 'linear-gradient(135deg, #d4922a 0%, #f0a830 100%)',
+    sprint: 3, sprintPct: 28,
+    issues: 31, issuesDone: 9,
+    createdBy: 'Can Kılıç', createdAt: '2 Nis 2024',
+    desc: 'SunExpress uçuş rezervasyon akışı ve müşteri deneyimi geliştirmeleri, ödeme entegrasyonları.',
+    members: [
+      { initials:'ZD', color:'#27ae60', name:'Zeynep Demir' },
+      { initials:'BT', color:'#e67e22', name:'Berk Tunç'    },
+      { initials:'CK', color:'#3498db', name:'Can Kılıç'    },
+      { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın'  },
+    ],
+    tasks: [
+      { id:'SX-18', title:'Koltuk seçim UI yenileme',            status:'prog',   priority:'high',   av:'ZD', avColor:'#27ae60', assignee:'Zeynep D.', reporter:'Can K.',   sprint:3, points:8, ai:62, label:'frontend' },
+      { id:'SX-19', title:'Ödeme entegrasyonu (iyzico)',          status:'todo',   priority:'high',   av:'BT', avColor:'#e67e22', assignee:'Berk T.',   reporter:'Can K.',   sprint:3, points:5, ai:58, label:'backend'  },
+      { id:'SX-20', title:'Check-in akışı',                      status:'todo',   priority:'medium', av:'CK', avColor:'#3498db', assignee:'Can K.',    reporter:'Berk T.',  sprint:3, points:3, ai:70, label:'feature'  },
+      { id:'SX-21', title:'Uçuş arama fiyat cacheleme',          status:'todo',   priority:'medium', av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Zeynep D.',sprint:3, points:5, ai:74, label:'perf'     },
+      { id:'SX-15', title:'Bagaj seçim komponenti',              status:'done',   priority:'low',    av:'ZD', avColor:'#27ae60', assignee:'Zeynep D.', reporter:'Can K.',   sprint:2, points:3, ai:88, label:'frontend' },
+    ],
+  },
+  fr: {
+    initials: 'FR', name: 'Frink', type: 'FR · Design System',
+    stripColor: '#5b4fd9',
+    logoBg: 'linear-gradient(135deg, #5b4fd9 0%, #7b6fe8 100%)',
+    sprint: 1, sprintPct: 15,
+    issues: 12, issuesDone: 2,
+    createdBy: 'Hasan Aydın', createdAt: '22 Nis 2024',
+    desc: 'Frink design system bileşen kütüphanesi, token sistemi ve dokümantasyon geliştirmesi.',
+    members: [
+      { initials:'AY', color:'#4a7fd4', name:'Hasan Aydın' },
+      { initials:'MK', color:'#9b59b6', name:'Melih Kaya'  },
+    ],
+    tasks: [
+      { id:'FR-5',  title:'Form elemanları tasarımı',             status:'prog',   priority:'high',   av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Melih K.', sprint:1, points:5, ai:67, label:'design'   },
+      { id:'FR-6',  title:'Token sistemi dokümantasyonu',         status:'todo',   priority:'low',    av:'MK', avColor:'#9b59b6', assignee:'Melih K.',  reporter:'Hasan A.', sprint:1, points:2, ai:72, label:'docs'     },
+      { id:'FR-7',  title:'Dark theme token haritası',            status:'todo',   priority:'medium', av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Melih K.', sprint:1, points:3, ai:61, label:'design'   },
+      { id:'FR-4',  title:'Button component variants',            status:'done',   priority:'medium', av:'MK', avColor:'#9b59b6', assignee:'Melih K.',  reporter:'Hasan A.', sprint:1, points:2, ai:93, label:'component'},
+      { id:'FR-3',  title:'Renk paleti token tanımları',          status:'done',   priority:'high',   av:'AY', avColor:'#4a7fd4', assignee:'Hasan A.',  reporter:'Melih K.', sprint:1, points:3, ai:97, label:'design'   },
+    ],
+  },
+};
+
+const PRIO_ICONS = {
+  urgent: `<svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" fill="#d2473d"/><path d="M8 4v4.5M8 11v.5" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  high:   `<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="9" width="2.5" height="5" rx=".5" fill="#ea8245"/><rect x="6.5" y="6" width="2.5" height="8" rx=".5" fill="#ea8245"/><rect x="11" y="3" width="2.5" height="11" rx=".5" fill="#ea8245"/></svg>`,
+  medium: `<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="9" width="2.5" height="5" rx=".5" fill="#6a7280"/><rect x="6.5" y="6" width="2.5" height="8" rx=".5" fill="#6a7280"/><rect x="11" y="3" width="2.5" height="11" rx=".5" fill="#cdd1d8"/></svg>`,
+  low:    `<svg viewBox="0 0 16 16" fill="none"><rect x="2" y="9" width="2.5" height="5" rx=".5" fill="#9aa0aa"/><rect x="6.5" y="6" width="2.5" height="8" rx=".5" fill="#cdd1d8"/><rect x="11" y="3" width="2.5" height="11" rx=".5" fill="#cdd1d8"/></svg>`,
+};
+const STATUS_LABEL = { todo: 'To Do', prog: 'In Progress', review: 'In Review', done: 'Done', blocked: 'Blocked' };
+
+const SVG = {
+  sprint: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>`,
+  issue:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 5a2 2 0 0 1 4 0h2"/></svg>`,
+  people: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  user:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  cal:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+  back:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
+  filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>`,
+  plus:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>`,
+  more:   `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>`,
+};
+
+function taskRowHtml(t) {
+  return `<div class="task-row" data-task-id="${t.id}">
+    <div class="tr-id">${t.id}</div>
+    <div class="tr-prio"><div style="width:14px;height:14px;">${PRIO_ICONS[t.priority] || PRIO_ICONS.medium}</div></div>
+    <div class="tr-title">${t.title}</div>
+    <div class="tr-status"><span class="sbadge ${t.status}">${STATUS_LABEL[t.status]}</span></div>
+    <div class="tr-assignee"><div class="mini-av" style="background:${t.avColor};" title="${t.assignee}">${t.av}</div></div>
+    <div class="tr-sprint">Sprint ${t.sprint}</div>
+    <div class="tr-points">${t.points} pt</div>
+    <div class="tr-more">${SVG.more}</div>
+  </div>`;
+}
+
+function render() {
+  const id = new URLSearchParams(location.search).get('id') || 'kd';
+  const p  = PROJECTS[id];
+  if (!p) {
+    document.getElementById('mainWrap').innerHTML = '<p style="padding:40px;color:var(--muted)">Proje bulunamadı.</p>';
+    return;
+  }
+
+  document.title = `Goventis — ${p.name}`;
+
+  const avatarsHtml = p.members.map(m =>
+    `<div class="proj-av" style="background:${m.color};" title="${m.name}">${m.initials}</div>`
+  ).join('');
+
+  const tasksHtml = p.tasks.map(taskRowHtml).join('');
+
+  document.getElementById('mainWrap').innerHTML = `
+    <div class="proj-strip" style="background:${p.stripColor};"></div>
+
+    <div class="proj-crumb">
+      <a onclick="history.back()">${SVG.back} Projects</a>
+      <span class="proj-crumb-sep">/</span>
+      <span class="proj-crumb-cur">${p.name}</span>
+    </div>
+
+    <div class="proj-summary">
+      <div class="proj-summary-inner">
+        <div class="proj-badge" style="background:${p.logoBg};">${p.initials}</div>
+        <div class="proj-summary-body">
+          <div class="proj-summary-row1">
+            <h1 class="proj-summary-name">${p.name}</h1>
+            <span class="proj-summary-type">${p.type}</span>
+          </div>
+          <p class="proj-summary-desc">${p.desc}</p>
+          <div class="proj-summary-footer">
+            <span class="proj-meta">
+              ${SVG.user} ${p.createdBy}
+              <span class="proj-meta-sep">·</span>
+              ${SVG.cal} ${p.createdAt}
+            </span>
+            <span class="proj-chip">${SVG.sprint} Sprint ${p.sprint}</span>
+            <span class="proj-chip">${SVG.issue} ${p.issues} issue</span>
+            <div class="proj-progress">
+              <div class="proj-progress-bar"><span style="width:${p.sprintPct}%"></span></div>
+              <span class="proj-progress-pct">${p.sprintPct}%</span>
+            </div>
+            <div class="proj-avatars">${avatarsHtml}</div>
+            <span class="proj-av-label">${p.members.length} üye</span>
+          </div>
+        </div>
+      </div>
+      <div class="proj-summary-actions">
+        <button class="btn" type="button"><span class="ico">${SVG.filter}</span>Filter</button>
+        <button class="btn btn-primary" type="button"><span class="ico">${SVG.plus}</span>New Issue</button>
+      </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <div class="task-head">
+      <div class="task-head-title">
+        Tasks <span class="task-total">${p.tasks.length}</span>
+      </div>
+    </div>
+
+    <div class="task-list">
+      <div class="task-col-head">
+        <span>ID</span>
+        <span></span>
+        <span>Başlık</span>
+        <span>Durum</span>
+        <span></span>
+        <span>Sprint</span>
+        <span class="th-right">Puan</span>
+        <span></span>
+      </div>
+      ${tasksHtml}
+    </div>
+  `;
+
+  /* Open task modal (same as My Issues) via postMessage to parent shell */
+  document.querySelectorAll('.task-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const task = p.tasks.find(t => t.id === row.dataset.taskId);
+      if (!task) return;
+      if (window.parent !== window) {
+        window.parent.postMessage({
+          type: 'openIssue',
+          issue: {
+            id:         task.id,
+            title:      task.title,
+            statusName: STATUS_LABEL[task.status],
+            priority:   task.priority.charAt(0).toUpperCase() + task.priority.slice(1),
+            assignee:   task.assignee,
+            reporter:   task.reporter,
+            sprint:     String(task.sprint),
+            points:     task.points,
+            ai:         task.ai,
+            labelTop:   task.label,
+          }
+        }, '*');
+      }
+    });
+  });
+
+  /* Relay Escape to parent so modal can close */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && window.parent !== window) {
+      window.parent.postMessage({ type: 'closeIssue' }, '*');
+    }
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

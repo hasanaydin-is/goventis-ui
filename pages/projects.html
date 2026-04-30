@@ -836,117 +836,12 @@ function statusLabel(s) {
 function openProject(id) {
   const p = PROJECTS[id];
   if (!p) return;
-
-  document.getElementById('pmBanner').style.background = p.bannerBg;
-  const logo = document.getElementById('pmLogo');
-  logo.style.background = p.logoBg;
-  logo.textContent = p.initials;
-
-  document.getElementById('pmName').textContent = p.name;
-  document.getElementById('pmType').textContent = p.type;
-
-  document.getElementById('pmChips').innerHTML = `
-    <span class="pm-chip">${SVG.sprint} Sprint ${p.sprint}</span>
-    <span class="pm-chip">${SVG.issue} ${p.issues} issue</span>
-    <span class="pm-chip">${SVG.people} ${p.members.length} üye</span>
-  `;
-
-  document.getElementById('pmMeta').innerHTML = `
-    <div class="pm-meta-row">${SVG.user} Oluşturan: <strong>${p.createdBy}</strong></div>
-    <div class="pm-meta-row">${SVG.cal} Tarih: <strong>${p.createdAt}</strong></div>
-  `;
-
-  /* Overview */
-  document.getElementById('tab-overview').innerHTML = `
-    <div class="pm-section">
-      <div class="pm-section-title">Hakkında</div>
-      <p style="font-size:13.5px;color:var(--fg-2);line-height:1.7;margin:0;">${p.desc}</p>
-    </div>
-    <div class="pm-section">
-      <div class="pm-section-title">Sprint Durumu</div>
-      <div class="pm-detail-grid">
-        <div class="pm-detail-item">
-          <div class="k">Aktif Sprint</div>
-          <div class="v">Sprint ${p.sprint}</div>
-        </div>
-        <div class="pm-detail-item">
-          <div class="k">Tamamlanan</div>
-          <div class="v">${p.issuesDone} / ${p.issues} issue</div>
-        </div>
-      </div>
-      <div class="pm-sprint-track">
-        <div class="pm-sprint-label">
-          <span>Sprint ilerlemesi</span>
-          <strong>${p.sprintPct}%</strong>
-        </div>
-        <div class="pm-sprint-bar"><span style="width:${p.sprintPct}%"></span></div>
-        <div class="pm-sprint-foot">
-          <span>${p.issuesDone} tamamlandı</span>
-          <span>${p.issues - p.issuesDone} kaldı</span>
-        </div>
-      </div>
-    </div>
-    <div class="pm-section">
-      <div class="pm-section-title">Proje Bilgileri</div>
-      <div class="pm-detail-grid">
-        <div class="pm-detail-item">
-          <div class="k">Oluşturan</div>
-          <div class="v soft">${p.createdBy}</div>
-        </div>
-        <div class="pm-detail-item">
-          <div class="k">Oluşturma Tarihi</div>
-          <div class="v soft">${p.createdAt}</div>
-        </div>
-        <div class="pm-detail-item">
-          <div class="k">Tür</div>
-          <div class="v soft">${p.type}</div>
-        </div>
-        <div class="pm-detail-item">
-          <div class="k">Ekip Büyüklüğü</div>
-          <div class="v soft">${p.members.length} kişi</div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  /* Issues */
-  document.getElementById('tab-issues').innerHTML = `
-    <div class="pm-section">
-      <div class="pm-section-title">Issues (${p.issues} toplam)</div>
-      ${p.sampleIssues.map(i => `
-        <div class="pm-issue-row">
-          <span class="pm-issue-id">${i.id}</span>
-          <span class="pm-issue-title">${i.title}</span>
-          <span class="pm-issue-status ${i.status}">${statusLabel(i.status)}</span>
-        </div>
-      `).join('')}
-    </div>
-  `;
-
-  /* Members */
-  document.getElementById('tab-members').innerHTML = `
-    <div class="pm-section">
-      <div class="pm-section-title">Ekip (${p.members.length} üye)</div>
-      ${p.members.map(m => `
-        <div class="pm-member-row">
-          <div class="pm-member-av" style="background:${m.color};">${m.initials}</div>
-          <span class="pm-member-name">${m.name}</span>
-          <span class="pm-member-role">${m.role}</span>
-        </div>
-      `).join('')}
-    </div>
-  `;
-
-  /* Reset to first tab */
-  switchTab('overview');
-
-  document.getElementById('scrim').classList.add('open');
-  document.getElementById('projModal').classList.add('open');
+  window.location.href = 'project-detail.html?id=' + id;
 }
 
 function closeModal() {
-  document.getElementById('scrim').classList.remove('open');
   document.getElementById('projModal').classList.remove('open');
+  document.getElementById('scrim').classList.remove('open');
 }
 
 function switchTab(name) {
@@ -968,8 +863,12 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
 });
 
+/* Parent shell can ask us to close (e.g. scrim click) */
+window.addEventListener('message', e => {
+  if (e.data?.type === 'closeModal') closeModal();
+});
+
 function openNewProject() {
-  /* placeholder — new project form would open here */
   alert('Yeni proje oluşturma formu burada açılacak.');
 }
 </script>
