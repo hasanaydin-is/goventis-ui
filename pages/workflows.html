@@ -38,6 +38,7 @@
       box-shadow: 0 4px 20px rgba(13,17,23,.08), 0 1px 4px rgba(13,17,23,.04);
       transform: translateY(-1px);
     }
+    .workflow-card { cursor: pointer; }
     .workflow-new-card {
       border: 2px dashed var(--border);
       align-items: center;
@@ -73,6 +74,7 @@
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
+      position: relative;
     }
     .workflow-card-title {
       margin: 0 0 4px;
@@ -106,6 +108,58 @@
       white-space: nowrap;
     }
     .workflow-chip svg { width: 11px; height: 11px; color: var(--muted); }
+    .more-btn {
+      width: 26px;
+      height: 26px;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .more-btn:hover {
+      background: var(--hover);
+      border-color: var(--border-2);
+      color: var(--fg);
+    }
+    .more-btn svg { width: 14px; height: 14px; }
+    .card-menu {
+      position: absolute;
+      z-index: 8;
+      top: 30px;
+      right: 0;
+      min-width: 132px;
+      padding: 5px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+      box-shadow: var(--shadow-modal);
+      display: none;
+    }
+    .card-menu.open { display: block; }
+    .card-menu-item {
+      width: 100%;
+      height: 30px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 8px;
+      color: var(--fg-2);
+      font-size: 12.5px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+    }
+    .card-menu-item:hover {
+      background: #fff0f0;
+      color: #c0392b;
+    }
     .workflow-steps-mini {
       display: flex;
       flex-wrap: wrap;
@@ -589,6 +643,54 @@
       gap: 8px;
       justify-content: flex-end;
     }
+    .readonly-note {
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 500;
+    }
+    .detail-summary {
+      padding: 18px 24px 0;
+    }
+    .detail-desc {
+      margin: 0;
+      color: var(--fg-2);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .detail-list {
+      display: grid;
+      gap: 9px;
+      padding: 18px 24px 24px;
+    }
+    .detail-step {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 11px 12px;
+    }
+    .detail-step-copy { min-width: 0; }
+    .detail-step-title {
+      color: var(--fg);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .detail-step-desc {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
   </style>
 </head>
 <body>
@@ -693,6 +795,27 @@
   </div>
 </div>
 
+<div class="wf-modal" id="workflowDetailModal" role="dialog" aria-modal="true" aria-labelledby="workflowDetailTitle">
+  <div class="wf-head">
+    <div>
+      <h2 class="wf-title" id="workflowDetailTitle"></h2>
+      <p class="wf-sub" id="workflowDetailSub"></p>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="readonly-note">Readonly</span>
+      <button class="wf-close" type="button" id="detailClose" aria-label="Kapat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="wf-body">
+    <div class="detail-summary">
+      <p class="detail-desc" id="workflowDetailDesc"></p>
+    </div>
+    <div class="detail-list" id="workflowDetailSteps"></div>
+  </div>
+</div>
+
 <script>
 const SVG = {
   workflow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>`,
@@ -700,6 +823,7 @@ const SVG = {
   drag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/></svg>`,
   minus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg>`,
   info: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>`,
+  more: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>`,
 };
 
 const PARTS = [
@@ -776,7 +900,10 @@ function saveStoredWorkflows(workflows) {
 }
 
 function allWorkflows() {
-  return [...DEFAULT_WORKFLOWS, ...getStoredWorkflows()];
+  return [
+    ...DEFAULT_WORKFLOWS.map(workflow => ({ ...workflow, system: true })),
+    ...getStoredWorkflows().map(workflow => ({ ...workflow, system: false })),
+  ];
 }
 
 function detailButton(desc) {
@@ -790,15 +917,19 @@ function aiBadge() {
 function workflowCard(workflow) {
   const steps = workflow.steps.map(getPart);
   return `
-    <article class="workflow-card">
+    <article class="workflow-card" data-workflow-id="${escapeHtml(workflow.id)}" tabindex="0" role="button">
       <div class="workflow-card-head">
         <div>
           <h3 class="workflow-card-title">${escapeHtml(workflow.name)}</h3>
           <p class="workflow-card-desc">${escapeHtml(workflow.desc)}</p>
         </div>
         <div class="workflow-card-actions">
-          ${detailButton(workflow.desc)}
-          <span class="workflow-chip">${SVG.workflow}${steps.length} adım</span>
+          ${workflow.system ? '' : `
+            <button class="more-btn" type="button" data-menu-for="${escapeHtml(workflow.id)}" aria-label="Workflow menüsü">${SVG.more}</button>
+            <div class="card-menu" data-menu-id="${escapeHtml(workflow.id)}">
+              <button class="card-menu-item" type="button" data-delete-workflow="${escapeHtml(workflow.id)}">Sil</button>
+            </div>
+          `}
         </div>
       </div>
       <div class="workflow-steps-mini">
@@ -819,6 +950,37 @@ function renderWorkflowGrid() {
   `;
   document.getElementById('workflowCount').textContent = `${workflows.length} workflow`;
   document.getElementById('newWorkflowCard').addEventListener('click', openModal);
+}
+
+function renderWorkflowDetail(workflow) {
+  const steps = workflow.steps.map(getPart);
+  document.getElementById('workflowDetailTitle').textContent = workflow.name;
+  document.getElementById('workflowDetailSub').textContent = `${steps.length} adım`;
+  document.getElementById('workflowDetailDesc').textContent = workflow.desc;
+  document.getElementById('workflowDetailSteps').innerHTML = steps.map((step, index) => {
+    const showAi = index === 0 ? Boolean(workflow.firstStepAi) : true;
+    return `
+      <div class="detail-step">
+        <span class="step-index">${index + 1}</span>
+        <span class="detail-step-copy">
+          <span class="detail-step-title">${escapeHtml(step.name)}</span>
+          <span class="detail-step-desc">${escapeHtml(step.desc)}</span>
+        </span>
+        ${showAi ? aiBadge() : '<span></span>'}
+      </div>
+    `;
+  }).join('');
+}
+
+function openDetailModal(workflowId) {
+  const workflow = allWorkflows().find(item => item.id === workflowId);
+  if (!workflow) return;
+  renderWorkflowDetail(workflow);
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('workflowDetailModal').classList.add('open');
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'modalState', open: true }, '*');
+  }
 }
 
 function templateOption(template) {
@@ -936,6 +1098,7 @@ function openModal() {
 
 function closeModal() {
   document.getElementById('workflowModal').classList.remove('open');
+  document.getElementById('workflowDetailModal').classList.remove('open');
   document.getElementById('scrim').classList.remove('open');
   if (window.parent !== window) {
     window.parent.postMessage({ type: 'modalState', open: false }, '*');
@@ -969,7 +1132,18 @@ function saveWorkflow() {
   closeModal();
 }
 
+function closeCardMenus() {
+  document.querySelectorAll('.card-menu.open').forEach(menu => menu.classList.remove('open'));
+}
+
+function deleteStoredWorkflow(workflowId) {
+  const workflows = getStoredWorkflows().filter(workflow => workflow.id !== workflowId);
+  saveStoredWorkflows(workflows);
+  renderWorkflowGrid();
+}
+
 document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('detailClose').addEventListener('click', closeModal);
 document.getElementById('cancelBtn').addEventListener('click', closeModal);
 document.getElementById('scrim').addEventListener('click', closeModal);
 document.getElementById('backBtn').addEventListener('click', () => setModalStep(1));
@@ -979,6 +1153,43 @@ document.getElementById('nextBtn').addEventListener('click', () => {
 });
 document.getElementById('saveBtn').addEventListener('click', saveWorkflow);
 document.getElementById('firstStepAi').addEventListener('change', renderCanvas);
+
+document.getElementById('workflowGrid').addEventListener('click', e => {
+  const menuBtn = e.target.closest('[data-menu-for]');
+  if (menuBtn) {
+    e.stopPropagation();
+    const menu = document.querySelector(`[data-menu-id="${menuBtn.dataset.menuFor}"]`);
+    const wasOpen = menu?.classList.contains('open');
+    closeCardMenus();
+    if (menu && !wasOpen) menu.classList.add('open');
+    return;
+  }
+
+  const deleteBtn = e.target.closest('[data-delete-workflow]');
+  if (deleteBtn) {
+    e.stopPropagation();
+    deleteStoredWorkflow(deleteBtn.dataset.deleteWorkflow);
+    return;
+  }
+
+  if (e.target.closest('#newWorkflowCard')) return;
+  if (e.target.closest('.detail-btn')) return;
+  const card = e.target.closest('.workflow-card');
+  if (!card) return;
+  openDetailModal(card.dataset.workflowId);
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.workflow-card-actions')) closeCardMenus();
+});
+
+document.getElementById('workflowGrid').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const card = e.target.closest('.workflow-card');
+  if (!card) return;
+  e.preventDefault();
+  openDetailModal(card.dataset.workflowId);
+});
 
 document.getElementById('templateGrid').addEventListener('change', e => {
   if (e.target.name === 'template') selectedTemplate = e.target.value;
