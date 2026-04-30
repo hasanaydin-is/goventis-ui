@@ -6,26 +6,15 @@
 .app {
   display: grid;
   grid-template-columns: 188px 1fr;
-  grid-template-rows: 44px 48px 1fr;
+  grid-template-rows: 48px 1fr;
   grid-template-areas:
-    "tabbar  tabbar"
     "sidebar topbar"
     "sidebar main";
   height: 100vh;
 }
 
-/* ───────── Window tab strip (above everything) ───────── */
-.tabbar {
-  grid-area: tabbar;
-  display: flex;
-  align-items: flex-end;
-  gap: 0;
-  padding: 6px 10px 0;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  -webkit-app-region: drag;
-  overflow: hidden;
-}
+/* ───────── Window tab strip (moved into topbar) ───────── */
+.tabbar { display: none; }
 .tabbar .traffic {
   display: flex;
   gap: 6px;
@@ -142,7 +131,7 @@
 /* Add-tab popover */
 .add-pop {
   position: fixed;
-  top: 44px;
+  top: 48px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -182,14 +171,16 @@
 .topbar {
   grid-area: topbar;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 16px;
+  align-items: flex-end;
+  gap: 0;
+  padding: 0 16px 0 8px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
 }
 .topbar .spacer { flex: 1; }
-.topbar-actions { display: flex; align-items: center; gap: 6px; }
+.topbar-actions { display: flex; align-items: center; gap: 6px; padding-bottom: 10px; }
+.topbar .tab-add { margin-bottom: 6px; margin-left: 2px; margin-right: 8px; }
 
 /* ── Timer widget (compact, in topbar) ── */
 .timer {
@@ -252,7 +243,7 @@
 /* Timer dropdown popover */
 .timer-pop {
   position: fixed;
-  top: 96px;
+  top: 52px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -487,7 +478,7 @@
 /* Calendar popover (mini-cal + today's events) */
 .cal-pop {
   position: fixed;
-  top: 96px;
+  top: 52px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
