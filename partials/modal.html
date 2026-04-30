@@ -1,0 +1,261 @@
+<!-- ═══════════════════════════════════════════════════════════
+     Issue detail modal — full-viewport, covers sidebar + topbar
+     ═══════════════════════════════════════════════════════════ -->
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+
+  <header class="modal-head">
+    <span class="modal-id" id="modalId">GOV-142 <span class="crumb-sep">/</span> KD Web <span class="crumb-sep">/</span> Sprint 24</span>
+    <span class="spacer"></span>
+    <button class="btn" type="button">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Open in Jira
+    </button>
+    <button class="btn" type="button">Subscribe</button>
+    <button class="icon-btn" id="modalClose" title="Close" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </header>
+
+  <section class="modal-body" id="modalBody">
+    <div class="modal-title-block">
+      <div class="modal-eyebrow" id="mEyebrow">GOV-142 · FEATURE · KD WEB</div>
+      <h2 class="modal-title" id="mTitle">Implement OAuth2 SSO flow for enterprise tenants</h2>
+      <div class="modal-meta">
+        <span class="meta-row">Status <strong id="mStatus">In Progress</strong></span>
+        <span class="meta-row">Priority <strong id="mPriority">High</strong></span>
+        <span class="meta-row">Assignee <strong id="mAssignee">Hasan A.</strong></span>
+        <span class="meta-row">Reporter <strong id="mReporter">Ezgi K.</strong></span>
+        <span class="meta-row">Sprint <strong id="mSprint">24</strong></span>
+        <span class="meta-row">Points <strong id="mPoints">8</strong></span>
+        <span class="meta-row">AI confidence <strong id="mAi">87%</strong></span>
+      </div>
+    </div>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="overview" role="tab" type="button">Genel bakış</button>
+      <button class="tab" data-tab="description" role="tab" type="button">Açıklama</button>
+      <button class="tab" data-tab="logs" role="tab" type="button">Loglar <span class="badge">12</span></button>
+      <button class="tab" data-tab="skills" role="tab" type="button">Skiller</button>
+    </nav>
+
+    <!-- Overview -->
+    <div class="tab-panel active" data-panel="overview">
+      <div class="overview-grid">
+        <div class="ov-card">
+          <h4>Detaylar</h4>
+          <div class="ov-row"><span class="k">Status</span><span class="v">In Progress · QA bekliyor</span></div>
+          <div class="ov-row"><span class="k">Priority</span><span class="v">High</span></div>
+          <div class="ov-row"><span class="k">Sprint</span><span class="v">Sprint 24 · 28 Apr → 12 May</span></div>
+          <div class="ov-row"><span class="k">Story points</span><span class="v">8</span></div>
+          <div class="ov-row"><span class="k">Branch</span><span class="v" style="font-family:var(--font-mono);font-size:12px;">feat/GOV-142-sso-oauth2</span></div>
+          <div class="ov-row"><span class="k">Pull request</span><span class="v" style="color:var(--accent);">#412 — Open</span></div>
+        </div>
+
+        <div class="ov-card">
+          <h4>AI Workflow Durumu</h4>
+          <div class="ov-row"><span class="k">Analiz</span><span class="v" style="color:var(--status-done);">✓ Tamamlandı</span></div>
+          <div class="ov-row"><span class="k">Development</span><span class="v" style="color:var(--status-prog);">● Devam ediyor</span></div>
+          <div class="ov-row"><span class="k">QA</span><span class="v" style="color:var(--muted);">○ Bekliyor</span></div>
+          <div class="ov-row"><span class="k">Human review</span><span class="v" style="color:var(--muted);">○ Bekliyor</span></div>
+          <div style="margin-top:14px;">
+            <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">AI confidence</div>
+            <div class="progress-row">
+              <div class="ai-bar"><span style="width:87%"></span></div>
+              <div style="font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;">87%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ov-card" style="grid-column:1 / -1;">
+          <h4>Acceptance criteria</h4>
+          <ul class="acceptance">
+            <li><span class="check done"></span> SAML 2.0 ve OAuth2 (Authorization Code + PKCE) ile SSO girişi yapılabilmeli.</li>
+            <li><span class="check done"></span> Tenant başına IdP konfigürasyonu admin panelinden yapılabilmeli.</li>
+            <li><span class="check"></span> Just-in-time provisioning ile ilk girişte kullanıcı otomatik oluşturulmalı.</li>
+            <li><span class="check"></span> SSO failover senaryosunda local credential fallback aktif olmalı.</li>
+            <li><span class="check"></span> Audit log: her giriş denemesi <code>auth.sso.attempt</code> event'i olarak loglanmalı.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="tab-panel" data-panel="description">
+      <div class="desc-prose">
+        <h3>Problem</h3>
+        <p>Enterprise müşterilerimizin %62'si onboarding sırasında "kendi IdP'mizle (Okta / Azure AD / Google Workspace) girebilmeliyiz" diyor. Şu an sadece email + magic link destekliyoruz; bu hem güvenlik ekiplerinin, hem de bizim provisioning sürecimizin tıkandığı yer.</p>
+
+        <h3>Çözüm</h3>
+        <p>Goventis backend'ine OAuth2 (Authorization Code + PKCE) ve SAML 2.0 destekli bir SSO katmanı eklenecek. Tenant-aware bir <code>auth/sso/connector</code> servisi, her tenant için saklanan IdP konfigürasyonunu okuyup ilgili flow'u başlatacak.</p>
+
+        <h3>Akış</h3>
+        <ol>
+          <li>Kullanıcı <code>goventis.app/sso/&lt;tenant&gt;</code> adresine gider.</li>
+          <li>Connector tenant config'i çözer, ilgili IdP'ye redirect başlatır.</li>
+          <li>Callback'te ID token doğrulanır, JIT provisioning ile user kaydı açılır/günceller.</li>
+          <li>Session token issue edilir, dashboard'a redirect.</li>
+        </ol>
+
+        <blockquote>Not: bu iş tamamlanmadan <strong>GOV-127 (audit log persistence)</strong> merge edilmemeli — SSO event'leri o pipeline'a yazılacak.</blockquote>
+
+        <h3>Test stratejisi</h3>
+        <ul>
+          <li>Unit: connector resolver, token validator (Jest)</li>
+          <li>Integration: 3 sandbox IdP — Okta dev, Azure B2C, Google Workspace</li>
+          <li>QA: AI test suite GOV-142-suite üretildi (12 case), sprint 24 sonuna kadar koşulacak</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Logs -->
+    <div class="tab-panel" data-panel="logs">
+      <div class="timeline">
+        <div class="log-item">
+          <span class="log-dot human"></span>
+          <div class="log-head"><span class="log-actor">Hasan A.</span> <span>issue'yu In Progress'e taşıdı</span> <span class="log-time">14:42</span></div>
+        </div>
+        <div class="log-item">
+          <span class="log-dot ai"></span>
+          <div class="log-head"><span class="log-actor ai">Goventis AI</span> <span>analizi tamamladı <span class="log-tag">analysis</span></span> <span class="log-time">14:38</span></div>
+          <div class="log-body">Acceptance criteria 5 madde olarak yazıldı, story points <strong>8</strong> önerildi (confidence 87%). 2 risk tespit edildi: <code>token rotation</code>, <code>tenant isolation</code>.</div>
+        </div>
+        <div class="log-item">
+          <span class="log-dot ai"></span>
+          <div class="log-head"><span class="log-actor ai">Goventis AI</span> <span>3 subtask oluşturdu <span class="log-tag">decompose</span></span> <span class="log-time">14:35</span></div>
+          <div class="log-body">GOV-142.1 connector resolver · GOV-142.2 token validator · GOV-142.3 JIT provisioning</div>
+        </div>
+        <div class="log-item">
+          <span class="log-dot"></span>
+          <div class="log-head"><span class="log-actor">Ezgi K.</span> <span>Hasan A.'ya assign etti</span> <span class="log-time">14:21</span></div>
+        </div>
+        <div class="log-item">
+          <span class="log-dot ai"></span>
+          <div class="log-head"><span class="log-actor ai">Goventis AI</span> <span>skill match yaptı <span class="log-tag">routing</span></span> <span class="log-time">14:19</span></div>
+          <div class="log-body">Hasan A.: OAuth/SAML deneyimi <strong>match</strong> · son 90 günde benzer 3 task tamamlamış. Önerilen.</div>
+        </div>
+        <div class="log-item">
+          <span class="log-dot"></span>
+          <div class="log-head"><span class="log-actor">Ezgi K.</span> <span>issue'yu oluşturdu</span> <span class="log-time">14:17</span></div>
+          <div class="log-body">Initial brief: "Enterprise müşteriler için SSO desteği lazım. Önce Okta + Azure AD."</div>
+        </div>
+        <div class="log-item">
+          <span class="log-dot ai"></span>
+          <div class="log-head"><span class="log-actor ai">Jira sync</span> <span>GOV-142 Jira'ya yazıldı <span class="log-tag">jira</span></span> <span class="log-time">14:17</span></div>
+          <div class="log-body">External ID: <code>JIRA-KDWEB-2841</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="tab-panel" data-panel="skills">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px;max-width:560px;">
+        Bu işin gerektirdiği skiller. AI, geçmiş tamamlanan task'lardaki commit/PR/yorum verisinden hangi skill'e ne kadar dokunduğunu çıkararak match yapar.
+      </div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="name">OAuth2 / OIDC</div><div class="cat">Authentication</div>
+          <div class="meter match"><span style="width:92%"></span></div>
+          <div class="lvl"><span>Required</span><span>Match 92%</span></div>
+        </div>
+        <div class="skill-card">
+          <div class="name">SAML 2.0</div><div class="cat">Authentication</div>
+          <div class="meter match"><span style="width:78%"></span></div>
+          <div class="lvl"><span>Required</span><span>Match 78%</span></div>
+        </div>
+        <div class="skill-card">
+          <div class="name">Multi-tenant architecture</div><div class="cat">Backend</div>
+          <div class="meter match"><span style="width:84%"></span></div>
+          <div class="lvl"><span>Required</span><span>Match 84%</span></div>
+        </div>
+        <div class="skill-card">
+          <div class="name">Node.js / NestJS</div><div class="cat">Stack</div>
+          <div class="meter match"><span style="width:96%"></span></div>
+          <div class="lvl"><span>Stack</span><span>Match 96%</span></div>
+        </div>
+        <div class="skill-card">
+          <div class="name">Security review</div><div class="cat">Cross-cutting</div>
+          <div class="meter"><span style="width:54%"></span></div>
+          <div class="lvl"><span>Recommended</span><span>Match 54%</span></div>
+        </div>
+        <div class="skill-card">
+          <div class="name">QA test design</div><div class="cat">QA</div>
+          <div class="meter"><span style="width:42%"></span></div>
+          <div class="lvl"><span>AI handles</span><span>—</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Chat panel -->
+  <aside class="chat">
+    <div class="chat-head">
+      <span class="ai-orb"></span>
+      <span class="title">Task asistanı</span>
+      <span class="sub"><span class="live"></span>online · GPT-4o</span>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+      <div class="msg">
+        <span class="av ai">AI</span>
+        <div class="bubble">
+          Selam Hasan, <strong>GOV-142</strong> üzerine takım kuruldu. Acceptance criteria yazıldı, 3 subtask oluşturuldu, Jira'ya senkronlandı.<br><br>
+          Şu an QA test case'leri için bekliyorum — başlayayım mı?
+        </div>
+      </div>
+      <div class="msg user">
+        <span class="av user">HA</span>
+        <div class="bubble">
+          QA case'lerini yaz, ama <strong>tenant isolation</strong> riskine özel bir set ekle. Sonra GOV-142.1 için kod taslağını da çıkar.
+        </div>
+      </div>
+      <div class="msg">
+        <span class="av ai">AI</span>
+        <div class="bubble">
+          Tamam. Plan:
+          <ul>
+            <li>12 base + 5 tenant-isolation case → toplam <strong>17 QA case</strong></li>
+            <li>GOV-142.1 için <code>connector.resolver.ts</code> taslağı</li>
+            <li>Risk maddeleri PR description'a eklenecek</li>
+          </ul>
+          <div class="ai-action-card">
+            <div class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="text">
+              <strong>17 QA case + kod taslağı</strong>
+              <span>~2 dk · Jira'ya da yorum eklenecek</span>
+            </div>
+            <button class="btn btn-primary" type="button">Onayla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="qa" type="button">+ Subtask'a böl</button>
+      <button class="qa" type="button">QA case yaz</button>
+      <button class="qa" type="button">Risk analizi</button>
+      <button class="qa" type="button">PR özeti</button>
+      <button class="qa" type="button">Jira'ya yorum at</button>
+    </div>
+
+    <div class="chat-input">
+      <div class="input-shell">
+        <textarea id="chatInput" placeholder="AI'ya yönerge ver — 'unit testi yaz', 'GOV-127 ile çakışma var mı?', 'PR'ı QA'a hazırla'…" rows="1"></textarea>
+        <div class="actions">
+          <button class="ico-btn" title="Attach" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <button class="ico-btn" title="Slash command" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="5" x2="5" y2="19"/></svg>
+          </button>
+          <span class="spacer"></span>
+          <span style="font-size:11px;color:var(--muted-2);">⌘ + Enter</span>
+          <button class="send" id="chatSend" type="button">
+            Gönder
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>

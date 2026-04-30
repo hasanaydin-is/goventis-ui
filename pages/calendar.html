@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Goventis — Calendar</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/layout.css" />
+  <link rel="stylesheet" href="../styles/components.css" />
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--surface); }
+    .main { height: 100%; overflow: auto; display: flex; flex-direction: column; }
+
+    .empty-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 40px;
+    }
+    .empty {
+      max-width: 420px;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 14px;
+    }
+    .empty-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: var(--accent-2);
+      color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .empty-icon svg { width: 26px; height: 26px; }
+    .empty h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .empty p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .empty-actions {
+      display: flex; gap: 8px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<main class="main">
+
+  <!-- Page header -->
+  <div class="page-head">
+    <div>
+      <div class="page-title-row">
+        <h1 class="page-title">Calendar</h1>
+      </div>
+      <div class="page-sub">Toplantılar, odak blokları ve issue deadline'ları tek görünümde.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" type="button">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        Yeni etkinlik
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-wrap">
+    <div class="empty">
+      <span class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="16" rx="2"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+          <line x1="8" y1="3" x2="8" y2="7"/>
+          <line x1="16" y1="3" x2="16" y2="7"/>
+        </svg>
+      </span>
+      <h2>Takvim boş</h2>
+      <p>Google Calendar'ı bağla veya ilk etkinliğini ekle. AI uygun zamanları senin için işaretler.</p>
+      <div class="empty-actions">
+        <button class="btn" type="button">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          Google Calendar bağla
+        </button>
+        <button class="btn btn-primary" type="button">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          Yeni etkinlik
+        </button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'closeIssue' }, '*');
+    }
+  });
+</script>
+
+</body>
+</html>

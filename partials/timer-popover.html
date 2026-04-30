@@ -1,0 +1,83 @@
+<!-- Timer popover -->
+<div class="timer-pop" id="timerPop">
+  <div class="tp-head">
+    <span class="tp-title">Time tracking</span>
+    <span class="tp-status-chip" id="tpStatus">Idle</span>
+  </div>
+  <div class="tp-clock" id="tpClock">00:00:00</div>
+  <div class="tp-clock-sub" id="tpClockSub">Bu oturumda hiç süre kaydedilmedi.</div>
+
+  <div class="tp-task">
+    <span class="id">GOV-142</span>
+    <span style="flex:1;color:var(--fg);font-weight:500;">Implement OAuth2 SSO flow</span>
+    <button class="swap" type="button">Değiştir</button>
+  </div>
+
+  <div class="tp-actions">
+    <button class="btn btn-primary" id="tpToggle" type="button">Start</button>
+    <button class="btn" id="tpReset" type="button">Reset</button>
+    <button class="btn" id="tpLog" type="button" title="Manuel kayıt ekle">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </div>
+
+  <div class="tp-summary">
+    <div class="tp-summary-row">
+      <span class="lbl">Bugün</span>
+      <span class="val">2h 34m</span>
+      <span class="target">Hedef 6h</span>
+    </div>
+    <div class="tp-week-bar"><span style="width:42%"></span></div>
+    <div class="tp-summary-row" style="margin-bottom:0;">
+      <span class="lbl">Hafta 18</span>
+      <span class="val">22h 14m</span>
+      <span class="target">/ 40h · %56</span>
+    </div>
+  </div>
+
+  <div class="tp-projects">
+    <div class="tp-proj">
+      <div class="name"><span class="dot" style="background:#5b5ff0;"></span>KD Web</div>
+      <div class="dur">1h 48m</div>
+    </div>
+    <div class="tp-proj">
+      <div class="name"><span class="dot" style="background:#a7d8c2;"></span>AI Core</div>
+      <div class="dur">42m</div>
+    </div>
+    <div class="tp-proj">
+      <div class="name"><span class="dot" style="background:#f4a738;"></span>Sprint 24</div>
+      <div class="dur">04m</div>
+    </div>
+  </div>
+
+  <div class="tp-recent">
+    <div class="tp-recent-label">
+      Bugün kaydedilenler
+      <button class="all" type="button" style="background:transparent;border:none;cursor:pointer;">Tümü →</button>
+    </div>
+    <div class="tp-recent-row">
+      <span class="pdot" style="background:#5b5ff0;"></span>
+      <span class="id">GOV-141</span>
+      <span class="ttl">SSO connector resolver</span>
+      <span class="dur">1h 24m</span>
+    </div>
+    <div class="tp-recent-row">
+      <span class="pdot" style="background:#5b5ff0;"></span>
+      <span class="id">GOV-138</span>
+      <span class="ttl">Audit log persistence</span>
+      <span class="dur">42m</span>
+    </div>
+    <div class="tp-recent-row">
+      <span class="pdot" style="background:#a7d8c2;"></span>
+      <span class="id">GOV-129</span>
+      <span class="ttl">JIT provisioning spec</span>
+      <span class="dur">28m</span>
+    </div>
+    <div class="tp-recent-row">
+      <span class="pdot" style="background:#f4a738;"></span>
+      <span class="id">—</span>
+      <span class="ttl" style="color:var(--muted);">Sprint 24 standup</span>
+      <span class="dur">04m</span>
+    </div>
+  </div>
+</div>
