@@ -117,6 +117,17 @@ function populateProjModal(p) {
   initTabs();
   initTimer();
   initCalendar();
+
+  // Favori Markalar toggle
+  const favToggle  = document.getElementById('favBrandsToggle');
+  const favList    = document.getElementById('favBrandsList');
+  const favSection = document.getElementById('favBrandsSection');
+  if (favToggle && favList && favSection) {
+    favToggle.addEventListener('click', () => {
+      const open = favList.classList.toggle('open');
+      favSection.classList.toggle('open', open);
+    });
+  }
   initModal();
   initChat();
   initAiDrawer();

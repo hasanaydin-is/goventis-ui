@@ -6,6 +6,7 @@ export function initAiDrawer() {
   const promptSend   = document.querySelector('.ap-send');
   const drawerInput  = document.getElementById('aiDrawerInput');
   const drawerSend   = document.getElementById('aiDrawerSend');
+  const aiStarBtn    = document.getElementById('aiStarBtn');
 
   if (!app || !drawerBody) return;
 
@@ -112,5 +113,22 @@ export function initAiDrawer() {
     });
   }
 
-  closeBtn && closeBtn.addEventListener('click', closeDrawer);
+  closeBtn && closeBtn.addEventListener('click', () => {
+    closeDrawer();
+    aiStarBtn && aiStarBtn.classList.remove('active');
+  });
+
+  // AI star button → toggle drawer + active state
+  if (aiStarBtn) {
+    aiStarBtn.addEventListener('click', () => {
+      const isOpen = app.classList.contains('drawer-open');
+      if (isOpen) {
+        closeDrawer();
+        aiStarBtn.classList.remove('active');
+      } else {
+        openDrawer();
+        aiStarBtn.classList.add('active');
+      }
+    });
+  }
 }

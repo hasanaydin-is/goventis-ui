@@ -23,6 +23,7 @@ export function initTabs() {
   let activeId = 'deck';
 
   function renderTabs() {
+    if (!stripEl) return;
     stripEl.innerHTML = '';
     tabs.forEach(t => {
       const el = document.createElement('button');
@@ -95,17 +96,30 @@ export function initTabs() {
     });
   });
 
-  addBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    const r = addBtn.getBoundingClientRect();
-    addPop.style.left = (r.right - 220) + 'px';
-    addPop.classList.toggle('open');
+  // Favori Markalar — her marka kendi tab ID'siyle açılır
+  document.querySelectorAll('.sidebar .fav-brand-item[data-brand]').forEach(item => {
+    item.addEventListener('click', () => {
+      const brand = item.dataset.brand;
+      const page  = item.dataset.page;
+      const lbl   = item.dataset.label;
+      const name  = lbl.split(' / ')[1] || brand;
+      openTab({ id: 'brand-' + brand, page, label: name, crumb: lbl, icon: '' });
+    });
   });
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#addPop') && !e.target.closest('#tabAdd')) {
-      addPop.classList.remove('open');
-    }
-  });
+
+  if (addBtn) {
+    addBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const r = addBtn.getBoundingClientRect();
+      addPop.style.left = (r.right - 220) + 'px';
+      addPop.classList.toggle('open');
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#addPop') && !e.target.closest('#tabAdd')) {
+        addPop.classList.remove('open');
+      }
+    });
+  }
   addPop.querySelectorAll('.ap-item').forEach(b => {
     b.addEventListener('click', () => {
       const page = b.dataset.page, lbl = b.dataset.label;

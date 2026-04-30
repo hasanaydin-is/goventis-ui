@@ -1,15 +1,9 @@
 <!-- ───────── Top bar ───────── -->
 <header class="topbar">
-  <div class="tabs-strip" id="tabsStrip" role="tablist"></div>
-  <button class="tab-add" id="tabAdd" title="New tab" type="button" aria-label="New tab">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-  </button>
-
   <span class="spacer"></span>
-
   <div class="topbar-actions">
 
-    <!-- Timer (click to start/stop, click pencil row to expand) -->
+    <!-- Timer (click to start/stop) -->
     <button class="timer" id="timerBtn" type="button" aria-pressed="false">
       <span class="play" id="timerPlay">
         <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
@@ -26,14 +20,18 @@
         <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
         <line x1="3" y1="10" x2="21" y2="10"/>
       </svg>
-      <span class="day">Apr 29</span>
+      <span class="day">Apr 30</span>
       <span class="events-pill">3</span>
     </button>
 
-    <button class="icon-btn" title="More" type="button">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>
+    <!-- AI Assistant button (toggles drawer) -->
+    <button class="icon-btn ai-star-btn" id="aiStarBtn" title="AI Asistan" type="button">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3c0 0 2 6 8 8-6 2-8 8-8 8s-2-6-8-8c6-2 8-8 8-8z"/>
+        <path d="M5.5 18c0 0 .7 2.5 2.5 2.5C6.2 20.5 5.5 23 5.5 23s-.7-2.5-2.5-2.5c1.8 0 2.5-2.5 2.5-2.5z"/>
+        <path d="M19 3.5c0 0 .5 2 2 2-1.5 0-2 2-2 2s-.5-2-2-2c1.5 0 2-2 2-2z"/>
       </svg>
     </button>
+
   </div>
 </header>

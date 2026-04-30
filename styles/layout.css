@@ -189,16 +189,26 @@ body.modal-open .ai-prompt {
 .topbar {
   grid-area: topbar;
   display: flex;
-  align-items: flex-end;
-  gap: 0;
-  padding: 0 16px 0 8px;
+  align-items: center;
+  padding: 0 12px 0 8px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
-  overflow: hidden;
 }
 .topbar .spacer { flex: 1; }
-.topbar-actions { display: flex; align-items: center; gap: 6px; padding-bottom: 10px; }
-.topbar .tab-add { margin-bottom: 6px; margin-left: 2px; margin-right: 8px; }
+.topbar-actions { display: flex; align-items: center; gap: 6px; }
+
+/* AI star button */
+.ai-star-btn {
+  color: var(--accent);
+  background: var(--accent-2);
+  border-color: var(--accent) !important;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.ai-star-btn:hover,
+.ai-star-btn.active {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
 
 /* ── Timer widget (compact, in topbar) ── */
 .timer {
@@ -884,6 +894,56 @@ body.modal-open .ai-prompt {
   width: 8px; height: 8px;
   border-radius: 2px;
   flex-shrink: 0;
+}
+
+/* ── Favori Markalar (collapsible) ── */
+.fav-brands-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 10px 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+.fav-brands-toggle span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  flex: 1;
+}
+.fav-brands-toggle:hover span { color: var(--muted); }
+.fav-caret {
+  color: var(--muted-2);
+  flex-shrink: 0;
+  transition: transform .18s ease;
+}
+.fav-brands-section.open .fav-caret {
+  transform: rotate(90deg);
+}
+
+.fav-brands-list {
+  display: none;
+  padding-bottom: 4px;
+}
+.fav-brands-list.open { display: block; }
+
+.fav-logo {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
 }
 
 /* Sidebar footer */
