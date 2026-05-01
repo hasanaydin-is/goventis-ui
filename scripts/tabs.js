@@ -97,7 +97,7 @@ export function initTabs() {
     });
   });
 
-  // Favori Markalar — her marka kendi tab ID'siyle açılır
+  // Favori Markalar — sidebar
   document.querySelectorAll('.sidebar .fav-brand-item[data-brand]').forEach(item => {
     item.addEventListener('click', () => {
       const brand = item.dataset.brand;
@@ -105,6 +105,25 @@ export function initTabs() {
       const lbl   = item.dataset.label;
       const name  = lbl.split(' / ')[1] || brand;
       openTab({ id: 'brand-' + brand, page, label: name, crumb: lbl, icon: '' });
+    });
+  });
+
+  // Topbar proje tab'ları
+  document.querySelectorAll('.topbar-proj-tab[data-brand]').forEach(item => {
+    item.addEventListener('click', e => {
+      // × kapat butonuna tıklandıysa tab'ı kaldır
+      if (e.target.closest('.tpt-close')) {
+        item.remove();
+        return;
+      }
+      const brand = item.dataset.brand;
+      const page  = item.dataset.page;
+      const lbl   = item.dataset.label;
+      const name  = lbl.split(' / ')[1] || brand;
+      openTab({ id: 'brand-' + brand, page, label: name, crumb: lbl, icon: '' });
+      document.querySelectorAll('.topbar-proj-tab').forEach(t =>
+        t.classList.toggle('active', t === item)
+      );
     });
   });
 
