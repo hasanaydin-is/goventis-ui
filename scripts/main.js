@@ -118,6 +118,58 @@ function populateProjModal(p) {
   initTimer();
   initCalendar();
 
+  // Org switcher dropdown
+  const orgBtn      = document.getElementById('orgSwitchBtn');
+  const orgDropdown = document.getElementById('orgDropdown');
+  const orgLogo     = document.getElementById('orgLogo');
+  const orgName     = document.getElementById('orgName');
+
+  if (orgDropdown) document.body.appendChild(orgDropdown);
+
+  function positionOrgDropdown() {
+    const rect = orgBtn.getBoundingClientRect();
+    orgDropdown.style.top  = (rect.bottom + 6) + 'px';
+    orgDropdown.style.left = rect.left + 'px';
+  }
+
+  function closeOrgDropdown() {
+    orgDropdown.classList.remove('open');
+    orgBtn.classList.remove('open');
+    orgBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  if (orgBtn && orgDropdown) {
+    orgBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !orgDropdown.classList.contains('open');
+      if (willOpen) positionOrgDropdown();
+      orgDropdown.classList.toggle('open', willOpen);
+      orgBtn.classList.toggle('open', willOpen);
+      orgBtn.setAttribute('aria-expanded', String(willOpen));
+    });
+
+    orgDropdown.querySelectorAll('.org-dropdown-item').forEach(item => {
+      item.addEventListener('click', () => {
+        orgDropdown.querySelectorAll('.org-dropdown-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        orgLogo.textContent = item.dataset.initial;
+        orgLogo.style.background = item.dataset.logoBg;
+        orgName.textContent = item.querySelector('.org-item-name').textContent;
+        closeOrgDropdown();
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!orgBtn.contains(e.target) && !orgDropdown.contains(e.target)) {
+        closeOrgDropdown();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (orgDropdown.classList.contains('open')) positionOrgDropdown();
+    });
+  }
+
   // Favori Markalar toggle
   const favToggle  = document.getElementById('favBrandsToggle');
   const favList    = document.getElementById('favBrandsList');

@@ -1,12 +1,33 @@
 <!-- ───────── Sidebar ───────── -->
 <aside class="sidebar">
 
-  <!-- Workspace switcher -->
+  <!-- Workspace / Org switcher -->
   <div class="ws-block">
-    <button class="ws-switch" type="button">
-      <span class="ws-logo">L</span>
-      Loodos
+    <button class="ws-switch" id="orgSwitchBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+      <span class="ws-logo" id="orgLogo">L</span>
+      <span class="ws-name" id="orgName">Loodos</span>
+      <svg class="ws-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
     </button>
+
+    <div class="org-dropdown" id="orgDropdown" role="listbox" aria-label="Organizasyon seç">
+      <div class="org-dropdown-item active" role="option" data-org="loodos" data-initial="L" data-logo-bg="#e4e4e4">
+        <span class="org-item-logo" style="background:#e4e4e4">L</span>
+        <span class="org-item-name">Loodos</span>
+        <svg class="org-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="org-dropdown-item" role="option" data-org="elaves" data-initial="E" data-logo-bg="#e4e4e4">
+        <span class="org-item-logo" style="background:#e4e4e4">E</span>
+        <span class="org-item-name">Elaves</span>
+        <svg class="org-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="org-dropdown-item" role="option" data-org="kahve-dunyasi" data-initial="KD" data-logo-bg="#e4e4e4">
+        <span class="org-item-logo" style="background:#e4e4e4">KD</span>
+        <span class="org-item-name">Kahve Dünyası</span>
+        <svg class="org-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>
   </div>
 
   <!-- Scrollable nav -->
