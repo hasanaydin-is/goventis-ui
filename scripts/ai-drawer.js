@@ -44,7 +44,7 @@ export function initAiDrawer() {
 
   // Option+G → AI prompt aç/kapat
   document.addEventListener('keydown', e => {
-    if (e.altKey && e.code === 'KeyG') {
+    if (e.altKey && e.code === 'KeyA') {
       e.preventDefault();
       if (promptEl && promptEl.classList.contains('visible')) {
         hidePrompt();
