@@ -8,6 +8,7 @@ export function initAiDrawer() {
   const drawerInput  = document.getElementById('aiDrawerInput');
   const drawerSend   = document.getElementById('aiDrawerSend');
   const aiStarBtn    = document.getElementById('aiStarBtn');
+  const chatTrigger  = document.getElementById('chatTriggerBtn');
 
   if (!app || !drawerBody) return;
 
@@ -15,6 +16,7 @@ export function initAiDrawer() {
 
   function openDrawer() {
     app.classList.add('drawer-open');
+    chatTrigger && chatTrigger.classList.add('hidden');
     if (!greeted) {
       greeted = true;
       appendMsg('ai', 'Merhaba! Sana nasıl yardımcı olabilirim?');
@@ -24,17 +26,20 @@ export function initAiDrawer() {
 
   function closeDrawer() {
     app.classList.remove('drawer-open');
+    chatTrigger && chatTrigger.classList.remove('hidden');
   }
 
   function showPrompt() {
     if (promptEl) {
       promptEl.classList.add('visible');
+      chatTrigger && chatTrigger.classList.add('hidden');
       setTimeout(() => promptInput && promptInput.focus(), 200);
     }
   }
 
   function hidePrompt() {
     if (promptEl) promptEl.classList.remove('visible');
+    chatTrigger && chatTrigger.classList.remove('hidden');
   }
 
   // Option+G → AI prompt aç/kapat
@@ -42,6 +47,7 @@ export function initAiDrawer() {
     if (e.altKey && e.code === 'KeyG') {
       e.preventDefault();
       if (promptEl && promptEl.classList.contains('visible')) {
+        hidePrompt();
       } else {
         showPrompt();
       }
@@ -145,6 +151,8 @@ export function initAiDrawer() {
       drawerInput.style.height = Math.min(drawerInput.scrollHeight, 120) + 'px';
     });
   }
+
+  chatTrigger && chatTrigger.addEventListener('click', () => showPrompt());
 
   closeBtn && closeBtn.addEventListener('click', () => {
     closeDrawer();

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>Goventis — Capabilities</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/layout.css" />
+  <link rel="stylesheet" href="../styles/components.css" />
+
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--surface); }
+    .main { height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+  </style>
+</head>
+<body>
+
+<main class="main">
+
+  <!-- Page header -->
+  <div class="page-head">
+    <div>
+      <div class="page-title-row">
+        <h1 class="page-title">Capabilities</h1>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'closeIssue' }, '*');
+    }
+  });
+</script>
+
+</body>
+</html>
