@@ -820,6 +820,13 @@
   padding: 0 40px;
   z-index: 150;
   pointer-events: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.ai-prompt.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 .ai-prompt-box {
   pointer-events: auto;

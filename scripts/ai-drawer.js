@@ -2,6 +2,7 @@ export function initAiDrawer() {
   const app          = document.querySelector('.app');
   const drawerBody   = document.getElementById('aiDrawerBody');
   const closeBtn     = document.getElementById('aiDrawerClose');
+  const promptEl     = document.getElementById('aiPrompt');
   const promptInput  = document.querySelector('.ai-prompt-input');
   const promptSend   = document.querySelector('.ap-send');
   const drawerInput  = document.getElementById('aiDrawerInput');
@@ -24,6 +25,37 @@ export function initAiDrawer() {
   function closeDrawer() {
     app.classList.remove('drawer-open');
   }
+
+  function showPrompt() {
+    if (promptEl) {
+      promptEl.classList.add('visible');
+      setTimeout(() => promptInput && promptInput.focus(), 200);
+    }
+  }
+
+  function hidePrompt() {
+    if (promptEl) promptEl.classList.remove('visible');
+  }
+
+  // Option+G → AI prompt aç/kapat
+  document.addEventListener('keydown', e => {
+    if (e.altKey && e.code === 'KeyG') {
+      e.preventDefault();
+      if (promptEl && promptEl.classList.contains('visible')) {
+      } else {
+        showPrompt();
+      }
+    }
+    // ESC → önce drawer, sonra prompt kapat
+    if (e.key === 'Escape') {
+      if (app.classList.contains('drawer-open')) {
+        closeDrawer();
+        aiStarBtn && aiStarBtn.classList.remove('active');
+      } else if (promptEl && promptEl.classList.contains('visible')) {
+        hidePrompt();
+      }
+    }
+  });
 
   function appendMsg(role, text) {
     const wrap = document.createElement('div');
@@ -54,6 +86,7 @@ export function initAiDrawer() {
 
   function sendMessage(text) {
     if (!text) return;
+    hidePrompt();
     openDrawer();
     appendMsg('user', text);
     appendTyping();
