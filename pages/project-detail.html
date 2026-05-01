@@ -563,8 +563,7 @@ const SVG = {
   user:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
   cal:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
   back:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
-  filter: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>`,
-  plus:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>`,
+  pin:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>`,
   more:   `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>`,
   workflow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8M7 8l4 8M17 8l-4 8"/></svg>`,
 };
@@ -689,8 +688,7 @@ function render() {
         </div>
       </div>
       <div class="proj-summary-actions">
-        <button class="btn" type="button"><span class="ico">${SVG.filter}</span>Filter</button>
-        <button class="btn btn-primary" type="button"><span class="ico">${SVG.plus}</span>New Issue</button>
+        <button class="btn" type="button" id="pinTabBtn"><span class="ico">${SVG.pin}</span>Add to tab</button>
       </div>
     </div>
 
@@ -748,6 +746,41 @@ function render() {
         }, '*');
       }
     });
+  });
+
+  /* Add to tab / Remove tab button */
+  let isPinned = false;
+
+  function updatePinBtn() {
+    const btn = document.getElementById('pinTabBtn');
+    if (!btn) return;
+    btn.innerHTML = isPinned
+      ? `<span class="ico">${SVG.pin}</span>Remove tab`
+      : `<span class="ico">${SVG.pin}</span>Add to tab`;
+  }
+
+  window.addEventListener('message', (ev) => {
+    if (ev.data?.type === 'tabStatus' && ev.data.projectId === id) {
+      isPinned = ev.data.pinned;
+      updatePinBtn();
+    }
+  });
+
+  window.parent.postMessage({ type: 'queryTabStatus', projectId: id }, '*');
+
+  document.getElementById('pinTabBtn')?.addEventListener('click', () => {
+    if (isPinned) {
+      isPinned = false;
+      updatePinBtn();
+      window.parent.postMessage({ type: 'unpinTab', projectId: id }, '*');
+    } else {
+      isPinned = true;
+      updatePinBtn();
+      window.parent.postMessage({
+        type: 'pinTab',
+        project: { id, label: p.type, dotColor: p.stripColor }
+      }, '*');
+    }
   });
 
   /* Relay Escape to parent so modal can close */

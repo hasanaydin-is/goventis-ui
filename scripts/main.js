@@ -251,9 +251,65 @@ function populateProjModal(p) {
     }
   });
 
+  /* Pinned project tabs */
+  const pinnedProjTabs = document.getElementById('pinnedProjTabs');
+
+  function addProjTab({ id, label, dotColor }) {
+    if (!pinnedProjTabs) return;
+    if (pinnedProjTabs.querySelector(`[data-proj-id="${id}"]`)) {
+      // Already pinned — just activate it
+      pinnedProjTabs.querySelectorAll('.topbar-proj-tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.projId === id)
+      );
+      return;
+    }
+    const btn = document.createElement('button');
+    btn.className = 'topbar-proj-tab';
+    btn.dataset.projId = id;
+    btn.type = 'button';
+    btn.innerHTML =
+      `<span class="tpt-dot" style="background:${dotColor};"></span>` +
+      `<span class="tpt-name">${label}</span>` +
+      `<span class="tpt-close" aria-label="Kapat">×</span>`;
+    pinnedProjTabs.appendChild(btn);
+    pinnedProjTabs.querySelectorAll('.topbar-proj-tab').forEach(t =>
+      t.classList.toggle('active', t === btn)
+    );
+  }
+
+  // Event delegation for pinned tabs
+  if (pinnedProjTabs) {
+    pinnedProjTabs.addEventListener('click', (e) => {
+      const closeBtn = e.target.closest('.tpt-close');
+      if (closeBtn) {
+        closeBtn.closest('.topbar-proj-tab').remove();
+        return;
+      }
+      const tab = e.target.closest('.topbar-proj-tab');
+      if (!tab) return;
+      pinnedProjTabs.querySelectorAll('.topbar-proj-tab').forEach(t =>
+        t.classList.toggle('active', t === tab)
+      );
+      contentFrame.src = 'pages/project-detail.html?id=' + tab.dataset.projId;
+    });
+  }
+
   /* postMessage from iframe */
   window.addEventListener('message', (e) => {
     if (!e.data || typeof e.data !== 'object') return;
+
+    if (e.data.type === 'queryTabStatus' && e.data.projectId) {
+      const pinned = !!pinnedProjTabs?.querySelector(`[data-proj-id="${e.data.projectId}"]`);
+      contentFrame.contentWindow?.postMessage({ type: 'tabStatus', projectId: e.data.projectId, pinned }, '*');
+    }
+
+    if (e.data.type === 'pinTab' && e.data.project) {
+      addProjTab(e.data.project);
+    }
+
+    if (e.data.type === 'unpinTab' && e.data.projectId) {
+      pinnedProjTabs?.querySelector(`[data-proj-id="${e.data.projectId}"]`)?.remove();
+    }
 
     if (e.data.type === 'projModalOpen' && e.data.project) {
       openProjModal(e.data.project);

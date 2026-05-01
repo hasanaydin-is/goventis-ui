@@ -108,25 +108,6 @@ export function initTabs() {
     });
   });
 
-  // Topbar proje tab'ları
-  document.querySelectorAll('.topbar-proj-tab[data-brand]').forEach(item => {
-    item.addEventListener('click', e => {
-      // × kapat butonuna tıklandıysa tab'ı kaldır
-      if (e.target.closest('.tpt-close')) {
-        item.remove();
-        return;
-      }
-      const brand = item.dataset.brand;
-      const page  = item.dataset.page;
-      const lbl   = item.dataset.label;
-      const name  = lbl.split(' / ')[1] || brand;
-      openTab({ id: 'brand-' + brand, page, label: name, crumb: lbl, icon: '' });
-      document.querySelectorAll('.topbar-proj-tab').forEach(t =>
-        t.classList.toggle('active', t === item)
-      );
-    });
-  });
-
   if (addBtn) {
     addBtn.addEventListener('click', e => {
       e.stopPropagation();
